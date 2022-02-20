@@ -1,0 +1,481 @@
+/*
+    DEMO STYLE
+*/
+
+@import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #aaa;
+}
+
+.paragraph {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1em;
+    font-weight: 300;
+    line-height: 1.7em;
+    color: #999;
+}
+
+a,
+a:hover,
+a:focus {
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.navbar {
+    padding: 15px 10px;
+    background: #fff;
+    border: none;
+    border-radius: 0;
+    margin-bottom: 40px;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-btn {
+    box-shadow: none;
+    outline: none !important;
+    border: none;
+}
+
+.line {
+    width: 100%;
+    height: 1px;
+    border-bottom: 1px dashed #ddd;
+    margin: 40px 0;
+}
+
+.title{
+    font-weight: 100;
+    font-family: Arial, Helvetica, sans-serif;
+    border-bottom-style: none;
+    border-width: 1px;
+    color: #394a59;
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+.larger-text {
+    font-size: 1.3em;
+}
+
+/* ---------------------------------------------------
+    SIDEBAR STYLE
+----------------------------------------------------- */
+
+.wrapper {
+    display: flex;
+    width: 100%;
+}
+
+#sidebar {
+    width: 220px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    /*height: 100vh;*/
+    height: 100vh;
+    overflow-y: scroll;
+    z-index: 999;
+    background: #394a59;
+    color: #fff;
+    transition: all 0.3s;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.2);
+}
+
+#sidebar.active {
+    margin-left: -220px;
+}
+
+#sidebar .sidebar-header {
+    padding: 20px 20px 20px 20px;
+    background: #31414c;
+}
+
+#sidebar .sidebar-header h3{
+    margin-bottom: 0px;
+}
+
+#sidebar ul.components {
+    padding: 0 0 20px 0;
+    border-bottom: 2px solid #5a6a78; 
+    margin-bottom: 40px;
+    /*border-bottom: 1px solid #47748b;*/
+}
+
+
+#sidebar ul p {
+    color: #fff;
+    padding: 10px;
+}
+
+#sidebar ul li a {
+    padding: 10px;
+    /*font-size: 1.1em;*/
+    font-size: 1.2em;
+    display: block;
+}
+
+#sidebar ul li a:hover {
+    color: #394a59;
+    background: #fff;
+}
+
+#sidebar ul li.active>a,
+a[aria-expanded="true"] {
+    color: #fff;
+    background: #4a6477;
+}
+
+a[data-toggle="collapse"] {
+    position: relative;
+}
+
+.dropdown-toggle::after {
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+}
+
+ul ul a {
+    font-size: 0.9em !important;
+    padding-left: 30px !important;
+    background: #4a6477;
+}
+
+
+/* ---------------------------------------------------
+    CONTENT STYLE
+----------------------------------------------------- */
+
+#content {
+    width: calc(100% - 240px);
+    padding: 40px;
+    min-height: 100vh;
+    transition: all 0.3s;
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #fff;
+    margin: 10px;
+}
+
+#content.active {
+    width: calc(100% - 20px);
+}
+
+.btn-toggle {
+    color: #fff;
+    background-color: #526777;
+}
+.btn-toggle:hover {
+    color: #394a59;
+    background-color: #a6b5bf;
+}
+
+/*.description b {
+    font-weight: 800;
+    color: #4a6477;
+}*/
+
+.pale-red {
+    background-color: #ffe7e6;
+}
+
+.pale-green {
+    background-color: #ddffdd;
+}
+
+.pale-yellow {
+    background-color: #ffffcc;
+}
+
+.pale-blue {
+    background-color: #ddffff;
+}
+
+.pale-purple{
+    background-color: #edeeff;
+}
+
+.light-gray {
+    background-color: #f1f1f1;
+}
+
+.text-input-pale-blue, .text-input-pale-blue:active, .text-input-pale-blue:focus {
+    color: #000;
+    background-color: #cadded;
+}
+
+.dark-blue{
+    color: #fff;
+    background-color: #677c8f;
+}
+
+.dark-blue:hover {
+    color: #fff;
+    background-color: #526575;
+}
+
+.text-dark-blue{
+    color: #677c8f;
+}
+
+.btn-outline-dark-blue {
+    color: #526575;
+    background-color: #fff;
+    border: 1px solid #526575;
+}
+
+.btn-outline-dark-blue:hover {
+    color: #fff;
+    background-color: #526575;
+    border: 1px solid #526575;
+}
+
+.btn-outline-dark-blue:focus, .btn-outline-dark-blue.focus {
+  box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.5);
+}
+
+.btn-outline-dark-blue.disabled, .btn-outline-dark-blue:disabled {
+  color: #526575;
+  background-color: transparent;
+}
+
+.btn-outline-dark-blue:not(:disabled):not(.disabled):active, .btn-outline-dark-blue:not(:disabled):not(.disabled).active,
+.show > .btn-outline-dark-blue.dropdown-toggle {
+  color: #fff;
+  background-color: #526575;
+  border-color: #526575;
+}
+
+.btn-outline-dark-blue:not(:disabled):not(.disabled):active:focus, .btn-outline-dark-blue:not(:disabled):not(.disabled).active:focus,
+.show > .btn-outline-dark-blue.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.5);
+}
+
+.btn-dark-blue {
+    color: #fff;
+    background-color: #677c8f;
+    border: 1px solid #677c8f;
+}
+
+.btn-dark-blue:hover {
+    color: #677c8f;
+    background-color: #fff;
+    border: 1px solid #677c8f;
+}
+
+.btn-dark-blue:focus, .btn-dark-blue.focus {
+  box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.5);
+}
+
+.btn-dark-blue.disabled, .btn-dark-blue:disabled {
+  background-color: #e3e1e1;
+  border: 0;color: #f2f0f0;
+  cursor:not-allowed;
+}
+
+.btn-dark-blue:not(:disabled):not(.disabled):active, .btn-dark-blue:not(:disabled):not(.disabled).active,
+.show > .btn-dark-blue.dropdown-toggle {
+    color: #677c8f;
+    background-color: #fff;
+    border: 1px solid #677c8f;
+}
+
+.btn-dark-blue:not(:disabled):not(.disabled):active:focus, .btn-dark-blue:not(:disabled):not(.disabled).active:focus,
+.show > .btn-dark-blue.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.5);
+}
+
+
+/* ---------------------------------------------------
+    MEDIAQUERIES
+----------------------------------------------------- */
+
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -220px;
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
+    #content {
+        width: calc(100% - 20px);
+    }
+    #content.active {
+        width: calc(100% - 240px);
+    }
+    #sidebarCollapse span {
+        display: none;
+    }
+}
+
+/* ---------------------------------------------------
+    For transView.html
+----------------------------------------------------- */
+
+.utr {
+    /*background-color: #e3e6e4;
+    color: black;*/
+
+    background-color: #ff9800;
+    /*border-top: 2px dotted blue;*/
+    color: black;
+}
+
+.cds {
+    /*background-color: #bdba1a;
+    color: white;*/
+
+    background-color: #fff;
+    /*border-top: 2px solid green;*/
+    color: black;
+}
+
+.inner-bound {
+    height:30px;
+    width:35px;
+    border-radius:0;
+    padding:0px;
+    background-color:#fff;
+    position:relative;
+    border-radius: 6px;
+}
+
+.inner-bound:hover{
+    background-color:#2196f3;
+    cursor: pointer;
+}
+
+.outer-bound {
+    display: inline-block;
+
+}
+
+.numberCircle {
+    background: white;
+    padding: 0px 6px;
+    border-radius: 50%;
+    font-size: 15px;
+
+    position: absolute;
+    left:50%;
+    top:50%;
+    transform: translate(-50%, -50%);
+
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+}
+
+.pos-rect {
+    height:18px;
+    width:40px;
+    font-size:0.8em;
+    text-align: center;
+}
+
+.comment-content p{
+    margin-bottom: 2px;
+}
+
+
+
+/*=========================================================================================
+    File Name: customizer.scss
+    Description: CSS used for demo purpose only. Remove this css from your project.
+    ----------------------------------------------------------------------------------------
+    Item Name: Modern Admin - Clean Bootstrap 4 Dashboard HTML Template
+    Version: 1.0
+    Author: PIXINVENT
+    Author URL: http://www.themeforest.net/user/pixinvent
+==========================================================================================*/
+.customizer {
+    width: 400px;
+    right: -400px;
+    padding: 0;
+    background-color: #FFF;
+    z-index: 1051;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    height: 100vh;
+    transition: right 0.4s cubic-bezier(0.05, 0.74, 0.2, 0.99);
+    backface-visibility: hidden;
+    border-left: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1); 
+}
+.customizer.open { right: 0; }
+.customizer .customizer-content { position: relative; height: 100%; }
+.customizer a.customizer-toggle {
+    background: #FFF;
+    color: #666EE8;
+    display: block;
+    border-radius: 15px 0 0 15px; 
+}
+.customizer a.customizer-close { color: #000; }
+.customizer .customizer-close {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    padding: 7px;
+    width: auto;
+    z-index: 10; 
+}
+.customizer .customizer-toggle {
+    position: absolute;
+    top: 35%;
+    width: 54px;
+    height: 50px;
+    left: -54px;
+    text-align: center;
+    line-height: 56px;
+    cursor: pointer; 
+}
+.customizer .color-options a { white-space: pre; }
+.customizer .customizer-sidebar-options .active {
+    background-color: #666EE8;
+    border-color: #666EE8;
+    color: #FFF; 
+}
+
+/*
+     Font
+*/
+
+@font-face {
+  font-family: Roboto;
+  src: url(/static/fonts/Roboto-Regular.ttf);
+}
+
+@font-face {
+  font-family: RobotoMono;
+  src: url(/static/fonts/RobotoMono-Regular.ttf);
+}
+
+@font-face {
+  font-family: Roboto;
+  src: url(/static/fonts/Roboto-Bold.ttf);
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: Roboto;
+  src: url(/static/fonts/Roboto-Light.ttf);
+  font-weight: 200;
+}
+
+@font-face {
+  font-family: Roboto;
+  src: url(/static/fonts/Roboto-LightItalic.ttf);
+  font-weight: 200;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: Roboto;
+  src: url(/static/fonts/Roboto-Italic.ttf);
+  font-style: italic;
+}

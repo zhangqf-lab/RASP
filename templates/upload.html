@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<title>Contact</title>
+{% endblock head %}
+
+{% block main %}
+
+
+<form action="/upload_request/" method="post">
+    {% csrf_token %}
+    <p>
+        Please fill in the information below and we will collect the data you provide. And we will contact you to obtain the details of data processing.
+    <p>
+
+    <div class="row" style="">
+        <div class="col-sm-2">
+            <label><b>Title</b> <span class="text-danger">*</span></label>
+        </div>
+        <div class="col-sm-10">
+            <input class="border rounded text-monospace w-100" name="title" type='text' required>
+        </div>
+    </div>
+
+    <div class="row" style="">
+        <div class="col-sm-2">
+            <label><b>Paper link</b> <span class="text-danger">*</span></label>
+        </div>
+        <div class="col-sm-10">
+            <input class="border rounded text-monospace w-100" name="url" type='url' required>
+        </div>
+    </div>
+
+    <div class="row" style="">
+        <div class="col-sm-2">
+            <label><b>Description</b></label>
+        </div>
+        <div class="col-sm-10">
+            <textarea class="border rounded w-100 text-monospace" name="description" style="min-height: 200px; border:6px solid; resize: vertical;" placeholder="Please provide the description for your datasets"></textarea>
+        </div>
+    </div>
+
+    <div class="row" style="">
+        <div class="col-sm-2">
+            <label><b>Your name</b> <span class="text-danger">*</span></label>
+        </div>
+        <div class="col-sm-10">
+            <input class="border rounded text-monospace w-100" name="name" type='text' required>
+        </div>
+    </div>
+
+    <div class="row" style="">
+        <div class="col-sm-2">
+            <label><b>Contact email</b> <span class="text-danger">*</span></label>
+        </div>
+        <div class="col-sm-10">
+            <input class="border rounded text-monospace w-100" name="email" type='email' required>
+        </div>
+    </div>
+
+    <input type="submit" value="Submit" style="float:right;" class="btn btn-success">
+
+</form>
+
+<script>
+    $('#upload_sb').addClass('active');
+</script>
+
+{% endblock main %}

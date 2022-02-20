@@ -1,0 +1,287 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<title>Help</title>
+<style type="text/css">
+	p { word-break: break-all; }
+	img { max-width: 100%; height: auto;}
+	p.p1 {margin: 7.0px 0.0px 7.0px 0.0px; text-align: center; font: 16.0px Helvetica}
+	p.p2 {margin: 7.0px 0.0px 7.0px 0.0px; font: 22.0px Palatino; color: #1b92a9}
+	p.p3 {margin: 7.0px 0.0px 7.0px 0.0px; font: 18.0px Palatino}
+	p.p4 {margin: 7.0px 0.0px 7.0px 0.0px; font: 14.0px Palatino; min-height: 14.0px}
+	p.p5 {margin: 7.0px 0.0px 7.0px 0.0px; font: 16.0px Helvetica}
+	p.p6 {margin: 7.0px 0.0px 7.0px 0.0px; font: 18.0px Palatino; color: #000000}
+	p.p7 {margin: 7.0px 0.0px 7.0px 0.0px; font: 18.0px Palatino; color: #1c8197; min-height: 19.0px}
+	p.p8 {margin: 7.0px 0.0px 7.0px 0.0px; font: 18.0px Palatino; color: #000000; min-height: 19.0px}
+	li.li2 {margin: 7.0px 0.0px 7.0px 0.0px; font: 18.0px Palatino; color: #1b92a9}
+	li.li3 {margin: 7.0px 0.0px 7.0px 0.0px; font: 18.0px Palatino}
+	li.li5 {margin: 7.0px 0.0px 7.0px 0.0px; font: 16.0px Helvetica}
+	li.li6 {margin: 7.0px 0.0px 7.0px 0.0px; font: 18.0px Palatino; color: #000000}
+	li.li9 {margin: 7.0px 0.0px 7.0px 0.0px; font: 22.0px Helvetica; color: #1c8197}
+	span.s1 {color: #262087}
+	span.s2 {color: #1b92a9}
+	span.s3 {font: 20.0px Helvetica; color: #1c8197; background-color: #ecedf1}
+	span.s4 {font: 18.0px Palatino; color: #000000}
+	span.s5 {font: 18.0px 'Songti SC'; color: #000000}
+	span.s6 {color: #000000}
+	span.s7 {font: 18.0px 'Songti SC'; color: #1c8197}
+	span.s8 {font: 18.0px Palatino}
+	span.s9 {font: 16.0px Arial; color: #7f7f7f}
+	span.s10 {color: #1c8197}
+	span.s11 {font: 16.0px Helvetica; color: #000000}
+	span.s12 {font: 18.0px 'Songti SC'; color: #1c8197}
+	span.s13 {font: 18.0px Palatino; color: #1c8197}
+	span.s14 {font: 18.0px 'Songti SC'}
+	span.s15 {background-color: #fffc80}
+	span.s16 {font: 18.0px 'Lucida Grande'; background-color: #fffc80}
+	span.s17 {text-decoration: underline}
+	span.s18 {background-color: #ecedf1}
+	span.s19 {font: 18.0px Helvetica; color: #1c8197}
+	table.t1 {border-collapse: collapse}
+	td.td1 {background-color: #faf7d9; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #ac916f #ac916f #ac916f #ac916f; padding: 0.0px 5.0px 0.0px 5.0px}
+	ol.ol1 {list-style-type: decimal}
+	ul.ul1 {list-style-type: disc}
+</style>
+{% endblock head %}
+
+{% block main %}
+
+<ul class="ul1">
+  <p class="p4"><br></p>
+  <img src="/static/img/help/RASP_symbol.png" width="353px" height="121px" alt="image">
+
+  <h1 style="margin: 7.0px 0.0px 7.0px 0.0px; font: 24.0px Times New Roman; color: #1b92a9"><b>Welcome to RASP</b></h1>
+  <p class="p3">Welcome to RASP! <span class="s1">RASP</span> (<span class="s1"><b>R</b></span>NA <span class="s1"><b>A</b></span>latas of <span class="s1"><b>S</b></span>tructure <span class="s1"><b>P</b></span>robing) is a transcriptome-scale RNA structure probing database. Currently, RASP contains <b>161</b> deduplicated transcriptome-wide RNA secondary structure probing datasets from <b>38</b> papers. RASP covers <b>18</b> species across animals, plants, bacteria, fungi, and also viruses, and categorizes <b>18</b> experimental methods including DMS-Seq, SHAPE-Seq, SHAPE-MaP, and icSHAPE, etc. RASP also provides a user-friendly interface to query, browse, and visualize RNA structure profiles, offering a shortcut to accessing RNA secondary structures grounded in experimental data.</p>
+  <p class="p3">Here as to make RASP help you better, we've prepared this tutorial inducing how it works each step. Let's begin!</p>
+
+  <p class="p4"><span class="Apple-converted-space"> </span></p>
+
+  <h1 style="margin: 7.0px 0.0px 7.0px 0.0px; font: 24.0px Times New Roman; color: #1b92a9"><b>How to Use RASP ?</b></h1>
+  <p class="p3">This tutorial is divided into six main sections, each matching the column of the menu bar on the left side of the website.</p>
+  <ol class="ol1">
+    <li class="li3"><span class="s3"><a href="#heading1">Search</a></span> helps you find the data of a certain gene or sequence, and look at scores from both <span class="s3"><a href="#heading2">Transcript</a></span> and Genetic view.</li>
+    <li class="li3"><span class="s3"><a href="#heading3">Browse</a></span> views the entire distribution of scores on a genetic level.</li>
+    <li class="li3"><span class="s3"><a href="#heading4">Alignment</a></span> allows you to compare two or three data.</li>
+    <li class="li3"><span class="s3"><a href="#heading4">Predict</a></span> is for prediction of RNA secondary structure based on sequence and scores.</li>
+    <li class="li3"><span class="s3"><a href="#heading5">Statistics</a></span><b> </b>contains reagent and principle of each paper and their access.</li>
+    <li class="li3"><span class="s3"><a href="#heading6">Download</a></span><b> </b>provides both the processed scores and original RT files.</li>
+  </ol>
+  <p class="p3">If you're new to RASP,<span class="Apple-converted-space">  </span>work your way through the following tutorial will help a great deal and then you could start your own project without hindrance.<span class="Apple-converted-space"> </span> Watch the <span class="s3"><a href="#tutorial">Tutorial</a></span> video to learn how to search icSHAPE data and predict secondary structure.</p>
+
+  <p class="p4"><br></p>
+
+  <h2 style="margin: 7.0px 0.0px 7.0px 0.0px; font: 22.0px Palatino; color: #1b92a9" id="heading1"><b> 1. How to Search ?</b></h2>
+  <ul class="ul1">
+    <li class="li5"><span class="s4"><b>Firstly let's look at the '</b></span><img src="/static/img/help/search_button.png" width="82.6px" height="32px" alt="image"><span class="s4"><b>' button in the menu bar on the left. As the button clicked, you may see the following interface</b></span><span class="s5"><b>: </b></span><img src="/static/img/help/search_main_interface.png" width="1069px" height="680px" alt="image"></li>
+    <li class="li6"><span class="s6"></span><b>Next, with </b><span class="s7"><b>①</b></span><b> selecting species "Human" (for example) , and inputting the gene ID (here we search 'GAPDH' for instance) you want to search for in</b><span class="s7"><b>②</b></span><b>, you could then </b><span class="s7"><b>③</b></span><b> click the botton "</b><span class="s3">Search Gene</span><b>" to find out the result. Or perhaps, if the exact sequence of interest is given, it could be directly put into the window "</b><span class="s3">Search Sequence</span><b>" through steps</b><span class="s8"><b> </b></span><span class="s7"><b>④ &gt; ⑤ &gt; ⑥ &gt; ⑦</b></span><span class="s8"><b> </b></span><b>just as what could be done in "</b><span class="s3">Search Gene</span><b>". The E-value at the bottom, is a parameter that describes the number of hits that "expect" to be accidentally seen when searching for a sequence of a particular size, and it can be set according to your needs.</b></li>
+  </ul>
+
+  <table width="100%" cellspacing="0" cellpadding="0" class="t1">
+    <tbody>
+      <tr>
+        <td valign="top" class="td1">
+          <p class="p6"><span class="s9"><b><i>Note:</i></b></span><span class="s6"> </span>Remember to close the options window after you've decided which organism to search for.</p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ul class="ul1">
+    <img src="/static/img/help/search_window_1_pic.png" width="1069px" height="680px" alt="image">
+  </ul>
+
+  <ul class="ul1">
+    <li class="li6"><b>Now, with the "</b><span class="s3">Search Gene</span><b>"</b><span class="s10"><b> </b></span><b>/ "</b><span class="s3">Search Sequence</span><b>" button clicked, you may see the following window:</b></li>
+  </ul>
+
+  <ul class="ul1">
+    <img src="/static/img/help/search_result_window.png" width="1069" height="628.8px" alt="image">
+  </ul>
+
+  <ul class="ul1">
+
+  <p class="p6"><span class="s3">(1) Match</span><b>: Matched gene symbol, gene ID or transcript ID.</b></p>
+  <p class="p6"><span class="s3">(2) Transcript</span><b>: Transcripts which overlap with this region. In the example window above,<span class="Apple-converted-space">  </span>the transcript column of the first line means in this region, the gene has 11 isoforms. The "</b><span class="s10"><b>#1</b></span><b>", "</b><span class="s10"><b>#2</b></span><b>" buttons can be clicked and each corresponds to reactivity score from this chosen transcription point of view.</b></p>
+  <p class="p6"><b>The following picture is what it looks like when chosen checking through Transcript, and in this situation transcript #2 of GAPDH gene is chosen . We'll talk in next chapter about how to view scores on this interface.</b></p>
+  <p class="p5"><img src="/static/img/help/search_transcrip_main.png" width="1069px" height="650px" alt="image"></p>
+  <p class="p6"><span class="s3">(3) Browse</span><b>: Browse is designed to check the scores in genetic view. You could check what can be explored in this interface through clicking the botton circled red as shown in the following picture. Again, we'll come back to it on how to use this method.</b></p>
+  <p class="p5"><img src="/static/img/help/search_browse.png" width="1069px" height="650px" alt="image"></p>
+  </ul>
+
+  <p class="p8"><b></b><br></p>
+
+  <h2 style="margin: 7.0px 0.0px 7.0px 0.0px; font: 22.0px Palatino; color: #1b92a9" id="heading2"><b> 2. How to look at scores through Transcript ?</b></h2>
+
+  <p class="p6"><b>In the last topic, we talked about the option of looking at scores from a transcript perspective, now we're going to look deeper, on how to view scores through "</b><span class="s3">Transcript</span><b>".</b></p>
+
+  <ul class="ul1">
+   <img src="/static/img/help/search_transcrip_main.png" width="1069px" height="650px" alt="image">
+  </ul>
+
+  <p class="p6"><b>This is what looks like when choosing "</b><span class="s3">Transcript</span><b>". Except for the "</b><span class="s10"><b>Summary of transcript</b></span><b>", if you slide it down you could see other colunms under.<span class="Apple-converted-space"> </span></b></p>
+
+  <ul class="ul1">
+    <li class="li6"><b>Let's first look at '</b><span class="s11"><img src="/static/img/help/search_transcript_sequence.png" width="307.2px" height="46px" alt="image"></span><b>'. In this window, the color of each base varies according to its reactivity score. Of course, the data, containing this transcript, needs to be selected first, otherwise the color of all bases will be uniformed as black, which means NULL.<span class="Apple-converted-space"> </span></b></li>
+  </ul>
+
+  <ul class="ul1">
+    <li class="li6"><b>Now we move to '</b><span class="s11"><img src="/static/img/help/search_transcript_load_data.png" width="159.4px" height="46px" alt="image"></span><b>'. Click "</b><span class="s10"><b>Select paper</b></span><b>" to select the target article, and then "</b><span class="s10"><b>Select dataset</b></span><b>" to choose which sample to use. After loading data, the detail of sample used can be seen, and the score of each base is shown in "</b><span class="s3">Sequence</span><b>".</b></li>
+    <img src="/static/img/help/search_transcript_load_select_data.png" width="1069px" height="329px" alt="image">
+    <p class="p6"><b>For instance, we select '</b><span class="s10"><b>HEK293T_invivo'</b></span><b> sample from article '</b><span class="s10"><b>Lu et al., Cell, 2016</b></span><b>', and the information about the data is as shown above. Move to "</b><span class="s3">Sequence</span><b>", where different points have been color-coded for each base. There are two ways to choose a certain region to check scores. You could </b><span class="s12"><b>①</b></span><b> input the exact base sequence of interest and click </b><span class="s12"><b>②</b></span><b> "</b><span class="s3">Search</span><b>" or you could as well directly select the start and then the end of the sequence that you want to search for.<span class="Apple-converted-space">  </span>After you have clicked the end base, the sequence between the first and last bases (including the first and last bases) is selected.<span class="Apple-converted-space"> </span></b></p>
+  </ul>
+
+  <ul class="ul1">
+    <li class="li6"><b>Here below are several operations you could make after sequence selected.</b></li>
+    <img src="/static/img/help/search_transcript_options.png" width="1069px" height="600px" alt="image">
+  </ul>
+
+  <ul class="ul1">
+    <p class="p5"><span class="s4"><b>You could click</b></span><span class="s13"><b> </b></span><span class="s12"><b>④</b></span><span class="s4"><b> '</b></span><img src="/static/img/help/search_transcript_copy.png" width="153.7px" height="40px" alt="image"><span class="s4"><b>' to copy the sequence you've selected, and data download, which includes base sequence and corresponding scores, is also provided as you click</b></span><span class="s13"><b> </b></span><span class="s12"><b>⑤</b></span><span class="s4"><b> '</b></span><img src="/static/img/help/search_transcript_download.png" width="153.7px" height="40px" alt="image"><span class="s4"><b>'. If you want to select another region, </b></span><span class="s12"><b>③</b></span><span class="s4"><b> '</b></span><img src="/static/img/help/search_transcript_clear.png" width="215px" height="40px" alt="image"><span class="s4"><b>' is what you need to press first.</b></span></p>
+  </ul>
+
+  <ul class="ul1">
+    <li class="li6"><b>If you want to compare differences between two or three data, </b><span class="s12"><b>⑥</b></span><span class="s10"><b> </b></span><b>'</b><span class="s11"><img src="/static/img/help/search_transcript_add.png" width="153.7px" height="40px" alt="image"></span><b>' will help you a great deal.<span class="Apple-converted-space"> </span></b></li>
+  </ul>
+
+  <ul class="ul1">
+    <p class="p6"><b>For instance, we first choose 1-50 bases and name this region '</b><span class="s10"><b>selected_1-50</b></span><b>', and we click </b>"<span class="s3">Add</span><b>". After this, you could see </b><span class="s11"><img src="/static/img/help/search_transcript_add_alignment.png" width="153px" height="40px" alt="image"></span><b> in the menu bar on the left. It means the sequence and the scores of the chosen region are added in </b><span class="s3">Alignment</span><b> interface. Next, we "</b><span class="s3">Clear Selection</span><b>" to choose 51-100 bases and name it '</b><span class="s10"><b>selected_51-100</b></span><b>' and add to alignment.</b></p>
+    <p class="p6"><b>Below is how the steps are taken. As for the results part, we normally compare two or three related regions but not such randomly chosen ones. The "</b><span class="s3">Alignment</span><b>" tries to find the maximum alignment method, and the bases that cannot be aligned are represented by gray blocks, and for the matched bases with higher value comes higher square column. In addition, the original comparison sequences and values support download as you press the "</b><span class="s3">Download</span><b>" button</b><span class="s14"><b>.</b></span><b><span class="Apple-converted-space"> </span></b></p>
+    <p class="p5"><img src="/static/img/help/search_transcript_alignment111.jpg" width="1069px" height="1046.5px" alt="image"></p>
+  </ul>
+
+  <ul class="ul1">
+    <li class="li5"><span class="s4"><b>Except for adding to alignment, we also provide </b></span><span class="s12"><b>⑦</b></span><span class="s13"><b> </b></span><span class="s4"><b>'</b></span><img src="/static/img/help/search_transcript_predict.png" width="153.7px" height="40px" alt="image"><span class="s4"><b>'</b></span><span class="s13"><b> </b></span><span class="s4"><b>function.</b></span><span class="s13"><b><span class="Apple-converted-space"> </span></b></span></li>
+  </ul>
+
+  <ul class="ul1">
+  <p class="p6"><b>After sequence selected, press "</b><span class="s3">Predict</span><b>", a new window with sequence and scores will be open. Set the </b><span class="s3">Intercept</span><b> and </b><span class="s3">Slop</span><b> value, and then you could submit the data and get the predicted RNA secondary structure.</b></p>
+
+  <table width="100%" cellspacing="0" cellpadding="0" class="t1">
+    <tbody>
+      <tr>
+        <td valign="top" class="td1">
+          <p class="p3"><span class="s9"><b><i>Note:</i></b></span> The botton "Predict" won't work if you haven't selected any sequence region.</p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="p6"><b>As shown, there are two methods provided, one is through </b><span class="s10"><b>forna</b></span><b>, another is </b><span class="s10"><b>VARNA</b></span><b>. The method, forna, is simple, and a direct click brings up a window displaying the secondary structure of RNA. But for VARNA, it takes a bit more steps as you need to first download it from </b><a href="http://varna.lri.fr/index.php?lang=en&amp;page=downloads&amp;css=varna"><b>http://varna.lri.fr/index.php?lang=en&amp;page=downloads&amp;css=varna</b></a><b> , and record its pathway on you computer.<span class="Apple-converted-space"> </span></b></p>
+  <p class="p6"><b>After downloads and<span class="Apple-converted-space">  </span>copying, you may get this on your clipboard</b><span class="s14"><b>：</b></span></p>
+  </ul>
+
+  <ul class="ul1">
+    <table width="100%" cellspacing="0" cellpadding="0" class="t1">
+      <tbody>
+        <tr>
+          <td valign="top" class="td1">
+            <p class="p3"><span class="s9"><b></b></span>java -cp VARNAv3-93.jar fr.orsay.lri.varna.applications.VARNAcmd -sequenceDBN GCUUCGCUCUCUGCUCCUCCUGUUCGACAGUCAGCCGCAUCUUCUUUUGCGUCGCCAGCCGAGCC -structureDBN "((((.(((....(((....((((...))))..)))((((........)))).....))).))))." -drawBackbone false -bpStyle simple -colorMap "0.031;0.0;0.0;0.0;0.0;0.0;0.0;0.013;0.0;0.013;0.002;0.056;0.062;0.248;0.001;0.0;0.053;0.017;0.035;0.024;0.06;0.114;0.177;0.03;0.021;0.263;0.374;0.331;0.545;0.619;0.173;0.381;0.3;0.158;0.023;0.0;0.093;0.032;0.184;0.112;0.426;0.699;0.236;0.349;0.5;0.263;0.121;0.027;0.002;0.047;0.111;0.046;0.011;0.057;0.003;0.1;0.0;0.061;0.008;0.008;0.025;0.019;0.079;0.005;0.197"<span class="Apple-converted-space">  </span>-spaceBetweenBases "0.8" -title "unknown_0" </p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="p6"><b>Open your terminal and copy this contents on the clipboard, in the meanwhile change VARNAv3-93.jar to your own pathway of this VARNAv3-93.jar. Click on ENTER and you will get the result.</b></p>
+  <p class="p5"><img src="/static/img/help/search_transcript_structure.png" width="1069px" height="650px" alt="image"></p>
+  </ul>
+
+  <p class="p8"><b></b><br></p>
+
+  <h2 style="margin: 7.0px 0.0px 7.0px 0.0px; font: 22.0px Palatino; color: #1b92a9" id="heading3"><b> 3. How to use Browse ?</b></h2>
+
+  <ul class="ul1">
+  <p class="p6"><b>Now we're back on Browse:</b></p>
+  <p class="p5"><img src="/static/img/help/browse_main.png" width="1069px" height="647.8px" alt="image"></p>
+  </ul>
+
+  <ul class="ul1">
+    <li class="li6"><b>There are two ways to select data</b></li>
+    <p class="p6"><b>After decided which organism to use (in this example we choose '</b><span class="s10"><b>Human</b></span><b>'), you could either expand </b><span class="s10"><b>(1) </b></span><span class="s11"><img src="/static/img/help/browse_click_here.png" width="352px" height="46px" alt="image"></span><b>to select data through setting </b><span class="s10"><b>Reagent</b></span><b>, </b><span class="s10"><b>Journal</b></span><b>, </b><span class="s10"><b>Condition</b></span><b>, and </b><span class="s10"><b>other information</b></span><b>, or you could jump to track selection window by clicking </b><span class="s10"><b>(2) </b></span><span class="s11"><img src="/static/img/help/browse_select_tracks.png" width="64.9px" height="40px" alt="image"></span><b>.<span class="Apple-converted-space"> </span></b></p>
+  </ul>
+
+  <ul class="ul1">
+    <li class="li6"><b>Now let's move to the display of tracks</b></li>
+    <p class="p6"><b>In the initial interface, the track of the species gene and annotation information is displayed by default. Click the </b><span class="s15"><b>' </b></span><span class="s16"><b>▾ </b></span><span class="s15"><b>'</b></span><b> </b><span class="s14"><b>in </b></span><span class="s11"><img src="/static/img/help/browse_refseq.png" width="231.5px" height="32px" alt="image"></span><b> , as in subgraph </b><span class="s10"><b>iii</b></span><b>, you could see here are several options.<span class="Apple-converted-space"> </span></b></p>
+    <p class="p6"><b>For </b><span class="s10"><b>Select Tracks</b></span><b>, here for example in subimage </b><span class="s10"><b>vi</b></span><b>, we select '</b><span class="s17"><b>icSHAPE</b></span><b>' in the </b><span class="s10"><b>Technology</b></span><b> column and '</b><span class="s17"><b>2016</b></span><b>' in the </b><span class="s10"><b>Year </b></span><b>column in the left menu bar </b><span class="s11"><img src="/static/img/help/browse_select_cetain_dataset.png" width="201px" height="170px" alt="image"></span><b>, and then four datasets are shown. Next, select '</b><span class="s17"><b>invivo</b></span><b>' data and then click '</b><span class="s11"><img src="/static/img/help/browse_select_tracks.png" width="64.9px" height="40px" alt="image"></span><b>.' to hide selection window, the selected two tracks are now displayed.</b></p>
+    <p class="p6"><b>If you want to choose different chromosomes, set </b><span class="s11"><img src="/static/img/help/browse_select_chromosome.png" width="72px" height="32px" alt="image"></span><b> as subgraph </b><span class="s10"><b>vii</b></span><b>. What's more, for a specific track, as shown in </b><span class="s10"><b>viii</b></span><b>, you could click the<span class="Apple-converted-space">  </span></b><span class="s15"><b>' </b></span><span class="s16"><b>▾ </b></span><span class="s15"><b>'</b></span><b> button to see more information about this data, you could also click '</b><span class="s11"><img src="/static/img/help/browse_edit_tracks.png" width="175px" height="32px" alt="image"></span><b>' to set the track scale to your preference</b><span class="s14"><b>. </b></span><b>Figure </b><span class="s10"><b>ix</b></span><b> shows what information is given when you check 'About this track'.</b></p>
+    <p class="p5"><img src="/static/img/help/Browse_steps.jpg" width="1069px" height="1000px" alt="image"></p>
+  </ul>
+
+  <p class="p8"><b></b><br></p>
+
+  <h2 style="margin: 7.0px 0.0px 7.0px 0.0px; font: 22.0px Palatino; color: #1b92a9" id="heading4"><b> 4. How to use Alignment &amp; Predict ?</b></h2>
+
+  <ul class="ul1">
+    <li class="li9"><span class="s4"><b></b></span><span class="s18">Alignment</span></li>
+    <p class="p6"><b>In addition to choosing different sequences to add to the alignment screen as we mentioned earlier, you can enter your own data directly into the alignment box. Input sequence on the left and input corresponding scores on the right</b><span class="s14"><b>.</b></span></p>
+    <p class="p5"><img src="/static/img/help/Alignment_main.png" width="1069px" height="556.8px" alt="image"></p>
+  </ul>
+
+  <ul class="ul1">
+    <li class="li9"><span class="s4"><b></b></span><span class="s18">Predict</span></li>
+    <p class="p6"><b>As with "</b><span class="s3">Alignment</span><b>", input the sequence on the left, input the corresponding score on the right, and set the desired parameters for '</b><span class="s10"><b>Intercept</b></span><span class="s6"><b>'</b></span><b> and '</b><span class="s10"><b>Slop</b></span><b>' to obtain the predicted RNA secondary structure.</b></p>
+    <p class="p5"><img src="/static/img/help/Predict_main.png" width="1069px" height="625.5px" alt="image"></p>
+  </ul>
+
+  <table width="100%" cellspacing="0" cellpadding="0" class="t1">
+    <tbody>
+      <tr>
+        <td valign="top" class="td1">
+          <p class="p3"><span class="s9"><b><i>Note:</i></b></span> When you set your own scores, remeber to separate two decimal values by Space.</p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="p8"><b></b><br></p>
+
+  <h2 style="margin: 7.0px 0.0px 7.0px 0.0px; font: 22.0px Palatino; color: #1b92a9" id="heading5"><b> 5. What's in Statistics ?</b></h2>
+
+  <ul class="ul1">
+    <p class="p6"><span class="s3">Statistics</span><b> stores the chemical reagent information of experiment, and the principle to get the data. There are three principles included in RASP, RT stop, cleavage and RT mutation.</b></p>
+    <p class="p6"><b>Apart from this, </b><span class="s3">Statistics</span><span class="s19"> </span><b>supports distinguishing articles included by the chemical reagent and principle. Through clicking yellow text ( data calculated by us) or blue text (data given by original paper), you could directly go into the website of the original paper.</b></p>
+    <p class="p5"><img src="/static/img/help/statistics.png" width="1069px" height="405.6px" alt="image"></p>
+  </ul>
+
+  <p class="p8"><b></b><br></p>
+
+  <h2 style="margin: 7.0px 0.0px 7.0px 0.0px; font: 22.0px Palatino; color: #1b92a9" id="heading6"><b> 6. How to Download</b></h2>
+
+
+  <ul class="ul1">
+    <p class="p6"><span class="s3">Download</span><b> section provides gene and annotation files, as well as original RT files and processed score files.</b></p>
+    <p class="p5"><img src="/static/img/help/download.png" width="1069px" height="859.3px" alt="image"></p>
+  </ul>
+
+  <p class="p8"><br></p>
+  <p class="p8"><b></b><br></p>
+
+
+	<h1 style="margin: 7.0px 0.0px 7.0px 0.0px; font: 24.0px Times New Roman; color: #1b92a9" id="tutorial"><b>Tutorial</b></h1>
+
+	<h3 style="margin: 7.0px 0.0px 7.0px 0.0px; font: 18.0px Times New Roman; color: #1b92a9"><b>1. Align CDS of ZIKV MR766 and PRVACB59 strain</b></h3>
+	<div class="row mb-5">
+		<div class="col-lg-8 offset-lg-2">
+			<div class="embed-responsive embed-responsive-16by9">
+			  	<iframe class="embed-responsive-item" src="https://www.youtube.com/embed/iv-c8JVD-HM" allowfullscreen="true"></iframe>
+			</div>
+		</div>
+	</div>
+
+	<h3 style="margin: 7.0px 0.0px 7.0px 0.0px; font: 18.0px Times New Roman; color: #1b92a9"><b>2. Predict 3'UTR structure of ZIKV MR766 strain with in vivo icSHAPE score</b></h3>
+	<div class="row mb-3">
+		<div class="col-lg-8 offset-lg-2">
+			<div class="embed-responsive embed-responsive-16by9">
+			  	<iframe class="embed-responsive-item" src="https://www.youtube.com/embed/KZ-zu2RZKxk" allowfullscreen="true"></iframe>
+			</div>
+		</div>
+	</div>
+
+</ul>
+
+<script>
+	$('#help_sb').addClass('active');
+</script>
+
+{% endblock main %}
+

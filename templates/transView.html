@@ -1,0 +1,1087 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<title>TransView</title>
+{% endblock head %}
+
+{% block main %}
+
+
+<div class="mb-3">
+    <div class="card" data-step="1" data-intro="Information of current transcript." data-position='bottom'>
+        <div class="card-header py-1 mb-0">
+            <h5 class="mb-0 text-secondary d-inline-block py-2" style="text-decoration:none;">
+                Summary of transcript
+            </h5>
+        </div>
+        <div class="row p-2">
+            <div class="col-lg-2 text-secondary">
+                <span class="font-weight-bold">Species</span>
+            </div>
+            <div class="col-lg-4">
+                <span>{{species}}</span>
+            </div>
+            <div class="col-lg-2 text-secondary">
+                <span class="font-weight-bold"><abbr title="Gene Symbol">Symbol</abbr></span>
+            </div>
+            <div class="col-lg-4">
+                <span>{{gene_symbol}}</span>
+            </div>
+        </div>
+
+        <div class="row p-2">
+            <div class="col-lg-2 text-secondary">
+                <span class="font-weight-bold">Gene ID</span>
+            </div>
+            <div class="col-lg-4">
+                <span>{{gid}}</span>
+            </div>
+            <div class="col-lg-2 text-secondary">
+                <span class="font-weight-bold">Transcript ID</span>
+            </div>
+            <div class="col-lg-4">
+                <span>{{tid}}</span>
+            </div>
+        </div>
+
+        <div class="row p-2">
+            <div class="col-lg-2 text-secondary">
+                <span class="font-weight-bold">Biotype</span>
+            </div>
+            <div class="col-lg-4">
+                <span>{{biotype}}</span>
+            </div>
+            <div class="col-lg-2 text-secondary">
+                <span class="font-weight-bold">Exon count</span>
+            </div>
+            <div class="col-lg-4">
+                <span>{{exon_count}}</span>
+            </div>
+        </div>
+
+        <div class="row p-2">
+            <div class="col-lg-2 text-secondary">
+                <span class="font-weight-bold">Locus</span>
+            </div>
+            <div class="col-lg-10">
+                <span class="text-monospace text-info"><a href="{{locus_link}}" target="_blank">{{locus}}</a></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mb-3">
+    <div class="card" data-step="2" data-intro="Panel to select a region of transcription. Users can download the sequence and scores by clicking the [Download] buttons. Users can predict the secondary structure by clicking the [Predict] button" data-position='bottom'>
+        <div class="card-header py-1 mb-0">
+            <h5 class="mb-0 text-secondary d-inline-block py-2" style="text-decoration:none;">
+                Selection
+            </h5>
+        </div>
+        <div class="row mt-2 mx-1">
+            <div class="col-lg-5 mb-0 mb-md-2">
+                <input class="form-control form-control-lg" type="text" id="to_search_seq" placeholder="search sequence">
+            </div>
+            <div class="col-lg-3 mb-0 mb-md-2" data-step="3" data-intro="Users can search sequence and select a region." data-position='right'>
+                <button class="btn btn-block btn-lg btn-outline-secondary" onclick="javascript:locate_search()"><i class="fas fa-search"></i> Search</button>
+            </div>
+            <div class="col-lg-4 mb-0 mb-md-2" data-step="4" data-intro="Clear the selection." data-position='left'>
+                <button class="btn btn-block btn-lg btn-outline-secondary" onclick="javascript:clear_selection();"><i class="fas fa-ban"></i> Clear selection</button>
+            </div>
+        </div>
+        <div class="row mb-0 mx-1">
+            <div class="col-md-3 mb-0 mb-md-2" data-step="5" data-intro="Copy the selected sequence or full sequence" data-position='right'>
+                <button type="button" class="btn btn-block btn-lg btn-outline-secondary" onclick="" id="copybtn"><i class="fas fa-copy"></i> Copy</button>
+            </div>
+            <div class="col-md-3 mb-0 mb-md-2" data-step="6" data-intro="Download the selected sequence and scores or full sequence and scores" data-position='right'>
+                <button type="button" class="btn btn-block btn-lg btn-outline-secondary" onclick="" id="downloadbtn"><i class="fas fa-download"></i> Download</button>
+            </div>
+            <div class="col-md-3 mb-0 mb-md-2" data-step="7" data-intro="Add the selected sequence and scores or full sequence or scores to multiple sequences alignment. Each user can add up to three, if it exceeds, you need to delete it on the [Alignment] page." data-position='left'>
+                <button type="button" class="btn btn-block btn-lg btn-outline-secondary" onclick="fill_ADA_form();" data-toggle="modal" data-target="#ADA"><i class="fas fa-cart-plus"></i> Add</button>
+            </div>
+            <div class="col-md-3 mb-0 mb-md-2" data-step="8" data-intro="Predict the secondary structure. Users need to select a region at first." data-position='left'>
+                <button type="button" class="btn btn-block btn-lg btn-outline-secondary disabled" onclick="" id="predbtn"><i class="fas fa-bolt"></i> Predict</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mb-3">
+    <div class="card">
+        <div class="card-header py-1 mb-0">
+            <div class="row">
+                <div class="col-lg-3">
+                    <h5 class="mb-0 text-secondary d-inline-block py-2" style="text-decoration:none;" data-step="9" data-intro="Display the sequence and scores. User can select a region in this panel." data-position='bottom'>
+                        Sequence
+                    </h5>
+                </div>
+                <div class="col-lg-3 align-self-center">
+                    <div>
+                        <span style="background-color:#ff9800;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span style="color:#ff9800;">UTR region</span>
+                    </div>
+                </div>
+                <div class="col-lg-6 align-self-center">
+                    <div id="legend">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;" class="container-fluid py-2" id="sequence_disp"></div>
+    </div>
+</div>
+
+
+<div class="mb-3">
+    <div class="card" data-step="10" data-intro="Load probing scores" data-position='bottom'>
+        <div class="card-header py-1 mb-0">
+            <h5 class="mb-0 text-secondary d-inline-block py-2" style="text-decoration:none;">
+                Load probing data
+            </h5>
+        </div>
+        <div class="row mx-1 mt-3">
+            <div class="col-12 col-lg-6">
+                <div class="form-group">
+                    <select class="form-control form-control-lg" id="paper_selection" onchange="javascript:load_dataset()">
+                        <option value="0">Select paper</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-12 col-lg-6 mb-3 mb-sm-0">
+                <select class="form-control form-control-lg" id="dataset_selection" onchange="javascript:query_load_shape()">
+                    <option value="0">Select dataset</option>
+                </select>
+            </div>
+        </div>
+        <div class="px-3 d-none" id="paper_info" style="overflow-x: scroll;">
+            <table class="table mb-0">
+                <tr>
+                    <th>Journal</th>
+                    <td id="pi_journal"></td>
+                    <th>Year</th>
+                    <td id="pi_year"></td>
+                    <th>Authors</th>
+                    <td id="pi_authors"></td>
+                </tr>
+                <tr>
+                    <th>DOI</th>
+                    <td><a style="word-break:break-all;" href="#" target="_blank" id="pi_doi"></a></td>
+                    <th>Technology</th>
+                    <td id="pi_techname"></td>
+                    <th>Reagent</th>
+                    <td id="pi_reagent"></td>
+                </tr>
+                <tr>
+                    <th>Cell line</th>
+                    <td id="pi_cellline"></td>
+                    <th>Condition</th>
+                    <td id="pi_condition"></td>
+                    <th>Data source</th>
+                    <td id="pi_datasource"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="mb-3">
+    <div class="card" data-step="11" data-intro="After loading probing scores, users can compare two datasets with scatter plot at here. Users can also select a region to analyze." data-position='bottom'>
+        <div class="card-header py-1 mb-0">
+            <h5 class="mb-0 text-secondary d-inline-block py-2" style="text-decoration:none;">
+                Compare probing data
+            </h5>
+        </div>
+        <div class="row mt-2 px-2">
+            <div class="col-lg-7 col-md-6">
+                <div class="form-group">
+                    <button class="btn btn-block btn-secondary mb-1" onclick="javascript:select_x_axis()">Select as X axis</button>
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">X axis</div>
+                        </div>
+                        <input type="text" class="form-control form-control-lg" id="x_axis_title" readonly>
+                    </div>
+                    <button class="btn btn-block btn-secondary mb-1" onclick="javascript:select_y_axis()">Select as Y axis</button>
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">Y axis</div>
+                        </div>
+                        <input type="text" class="form-control form-control-lg" id="y_axis_title" readonly>
+                    </div>
+                </div>
+                <div class="row my-2 p-2">
+                    <table class="table table-sm h-100 mb-0">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>X-axis</th>
+                                <th>Y-axis</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Range (1-based)</td>
+                                <td class="compare_table" colspan="2"></td>
+                            </tr>
+                            <tr>
+                                <td>Min</td>
+                                <td class="compare_table"></td>
+                                <td class="compare_table"></td>
+                            </tr>
+                            <tr>
+                                <td>Max</td>
+                                <td class="compare_table"></td>
+                                <td class="compare_table"></td>
+                            </tr>
+                            <tr>
+                                <td>Mean</td>
+                                <td class="compare_table"></td>
+                                <td class="compare_table"></td>
+                            </tr>
+                            <tr>
+                                <td>Median</td>
+                                <td class="compare_table"></td>
+                                <td class="compare_table"></td>
+                            </tr>
+                            <tr>
+                                <td>Correlation</td>
+                                <td colspan="2" class="compare_table"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-lg-5 col-md-6 ml-auto" style="">
+                <div style="overflow-x: scroll;">
+                   <div id="scatter"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="mb-3">
+    <div class="card" data-step="12" data-intro="Statistics and distribution of full scores or selected scores" data-position='bottom'>
+        <div class="card-header py-1 mb-0">
+            <h5 class="mb-0 text-secondary d-inline-block py-2" style="text-decoration:none;">
+                Statistics
+            </h5>
+        </div>
+        <div class="row my-2 p-2">
+            <div class="col-lg-6">
+                <table class="table h-100">
+                    <thead>
+                        <th>Statistics</th>
+                        <th>Value</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Range (1-based)</td>
+                            <td class="table-data-to-set">NULL</td>
+                        </tr>
+                        <tr>
+                            <td>Valid count</td>
+                            <td class="table-data-to-set">0</td>
+                        </tr>
+                        <tr>
+                            <td>Min</td>
+                            <td class="table-data-to-set">NULL</td>
+                        </tr>
+                        <tr>
+                            <td>Max</td>
+                            <td class="table-data-to-set">NULL</td>
+                        </tr>
+                        <tr>
+                            <td>Mean</td>
+                            <td class="table-data-to-set">NULL</td>
+                        </tr>
+                        <tr>
+                            <td>Median</td>
+                            <td class="table-data-to-set">NULL</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        	<div class="col-lg-6" style="">
+                <div style="overflow-x: scroll;">
+        	       <div id="statistic"></div>
+                </div>
+        	</div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="ADA" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <form class="modal-content" action="/api/update_align_seq/" method="post" style="min-width:800px;max-width: 100vw;" id="ADA_form">
+      {% csrf_token %}
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Add Sequence to Alignment</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-3">
+            <div class="col-12">
+                <input type="text" class="text-input-pale-blue form-control form-control-lg" name="name" placeholder="Name" autocomplete="off" id="ADA_name" required>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <textarea name="seq" id="ADA_seq" class="border rounded text-input-pale-blue w-100 text-monospace" style="min-height: 200px; border:6px solid; resize: vertical;" required></textarea>
+            </div>
+            <div class="col-lg-6">
+                <textarea name="score" id="ADA_score" class="border rounded text-input-pale-blue w-100 text-monospace" style="min-height: 200px; border:6px solid; resize: vertical;" required></textarea>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="model_wait_spinner" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content" id="ADA_form">
+      <div class="modal-header">
+        <h5 class="modal-title">Please waiting...</h5>
+      </div>
+      <div class="modal-body">
+        <div class="spinner-grow text-dark mx-auto d-block" role="status" style="width:50px;height:50px;">
+            <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+    $('#search_sb').addClass('active');
+
+    let shape_ready = false; // The shape scores have been loaded ?
+    let shape_values = []; // The loaded SHAPE
+    //let max_nuc_eachline = Math.max( Math.floor((document.getElementById('content').offsetWidth-20-80)/35), 20 );
+        // How many nucleotides to display each row
+        // At least 20nt each row
+    let range = [];  // Selection range (0-based)
+    let strand = "{{strand}}" // + or -
+    if(strand=="+")
+        strand = "pos";
+    else
+        strand = "neg";
+    let species = "{{species}}";
+    let tid = "{{tid}}";
+    let db_tid = "{{db_tid}}";
+    let base_objs = [];
+
+    let x_axis_values = [];
+    let y_axis_values = [];
+
+    // Sequence to display
+    let sequence = "{{sequence}}";
+    
+    function display_sequence(sequence, cds_start, cds_end){
+        /*
+            cds_start and cds_end: 1-based
+        */
+        //var oneline = '<div class="clearfix mb-2">';
+        for(var i=0; i<sequence.length; i++){
+            //if(i%max_nuc_eachline==0 && i!=sequence.length-1)
+            //{
+            //    if(i!=0)
+            //        oneline += '</div>';
+            //    oneline += '<div class="clearfix mb-2">';
+            //}
+            var modiclass = "";
+
+            if(i+1>=cds_start && i+1<=cds_end)
+                modiclass = "cds";
+            else
+                modiclass = "utr";
+
+            var nucnum = "&nbsp;";
+            if((i+1)%20==0 || i==0 || i==sequence.length-1)
+                nucnum = String(i+1);
+
+            //oneline += '<div class="outer-bound"><div class="inner-bound" data-toggle="tooltip" data-placement="top" title="NULL"><span class="numberCircle">'+sequence[i]+'</span></div><div class="pos-rect '+modiclass+'">'+nucnum+'</div></div>';
+            var outer_bound = $('<div class="outer-bound"></div>');
+            var tooltip = $('<div class="inner-bound" data-toggle="tooltip" data-placement="top" title="NULL"></div>');
+            var number_circle = $('<span class="numberCircle"></span>');
+            number_circle.html(sequence[i]);
+            tooltip.append(number_circle);
+            base_objs.push(tooltip);
+            outer_bound.append(tooltip);
+
+            var post_rect = $('<div class="pos-rect"></div>');
+            post_rect.addClass(modiclass);
+            post_rect.html(nucnum);
+            outer_bound.append(post_rect);
+            $('#sequence_disp').append( outer_bound );
+
+            //oneline += '<div class="outer-bound"><div class="inner-bound" data-toggle="tooltip" data-placement="top" title="NULL"><span class="numberCircle">'+sequence[i]+'</span></div><div class="pos-rect '+modiclass+'">'+nucnum+'</div></div>';
+        }
+        //oneline += '</div>';
+        //document.getElementById('sequence_disp').innerHTML = oneline;
+
+        //$('[data-toggle="tooltip"]').tooltip('disable');
+    }
+
+    /* 把score highlight出来 */
+    function highlight() {
+        if(range.length!=2)
+        {
+            alerter("Error", "highlight() impossible error occurred");
+            return;
+        }
+        for(var i=range[0];i<=range[1];i++)
+        {
+            //obj.style.backgroundColor = '#2196f3';
+            base_objs[i].css("background-color", "#2196f3");
+        }
+        //$('.inner-bound').each(function(i, obj) {
+        //    if(i>=range[0] && i<=range[1])
+        //        obj.style.backgroundColor = '#2196f3';
+        //});
+        $('#predbtn').removeClass('disabled');
+        $('#predbtn').on('click', predict_str);
+        histogram();
+        simple_statistics();
+        try_scatter();
+    }
+
+    /* 去除highlight */
+    function dehighlight(){
+        for(var i=0;i<base_objs.length;i++)
+        {
+            if(range.length!=0 && i==range[0]) continue;
+            base_objs[i].css("background-color", "#fff");
+        }
+
+        //$('.inner-bound').each(function(i, obj) {
+        //    if(i!=range[0])
+        //        obj.style.backgroundColor = '#fff';
+        //});
+        $('#predbtn').addClass('disabled');
+        $("#predbtn").off('click');
+        histogram();
+        simple_statistics();
+        try_scatter();
+    }
+
+    /* 初始化时，禁止预测按钮可以点击 */
+    $("#predbtn").off('click');
+
+    /* Clear按钮响应 */
+    function clear_selection(){
+        while(range.length!=0) range.pop();
+        dehighlight();
+    }
+
+    /* Predict按钮响应 */
+    function predict_str(){
+        var subseq = sequence.slice(range[0], range[1]+1);
+        //$('.inner-bound').each(function(i, obj) {
+        //    if(i>=range[0] && i<=range[1])
+        //        subseq += obj.children[0].innerHTML;
+        //});
+        var link = "http://rasp.zhanglab.net/predstr/?seq="+subseq;
+        if(shape_ready){
+            link += "&shape="+shape_values.slice(range[0],range[1]+1).join(' ');
+        }
+        window.open(link);
+    }
+
+    /* 设置SHAPE颜色 */
+    function set_shape_colors(color_list, base_color="white"){
+        for(var i=0;i<base_objs.length;i++)
+            base_objs[i].children()[0].style.color = color_list[i];
+        //$('.inner-bound').each(function(i, obj) {
+            //obj.children[0].style.backgroundColor = color_list[i]; // 碱基周围的框
+            //obj.children[0].style.color = base_color; //碱基字母为白色
+        //    obj.children[0].style.color = color_list[i];
+        //});
+    }
+
+    function clear_shape(){
+        shape_ready = false;
+        shape_values = [];
+        for(var i=0;i<base_objs.length;i++)
+            base_objs[i].children()[0].style.color = "#000";
+
+        //$('.inner-bound').each(function(i, obj) {
+            //obj.children[0].style.backgroundColor = "#fff";
+            //obj.children[0].style.color = "#000";
+        //    obj.children[0].style.color = "#000";
+        //});
+        $('[data-toggle="tooltip"]').tooltip('disable');
+    }
+
+    function set_shape_tooltip(){
+        for(var i=0;i<base_objs.length;i++)
+        {
+            base_objs[i].attr('title', shape_values[i]);
+            base_objs[i].attr('data-original-title', shape_values[i]);
+        }
+        $('[data-toggle="tooltip"]').tooltip('enable');
+
+        //$('.inner-bound').each(function(i, obj) {
+        //    obj.setAttribute("title", shape_values[i]);
+        //    obj.setAttribute("data-original-title", shape_values[i]);
+        //});
+    }
+
+    // 从shape_values中取出非NULL的值
+    function select_valid_shape(raw_shape, i, j){
+        // i, j: 0-based
+        var valid_shape = [];
+        for(;i<=j;i++){
+            if(raw_shape[i]!='NULL')
+                valid_shape.push( parseFloat(shape_values[i]) );
+        }
+        return valid_shape;
+    }
+
+    // 画直方图
+    function histogram(){
+        if(shape_ready==false) return;
+        var valid_shape_all = select_valid_shape(shape_values, 0, shape_values.length-1);
+        var valid_shape_selection = [];
+        if(range.length==2)
+            valid_shape_selection = select_valid_shape(shape_values, range[0], range[1]);
+
+        data = [];
+        if(valid_shape_all.length>=1){
+            var trace = {
+                x: valid_shape_all,
+                type: 'histogram',
+                opacity: 0.6,
+                name: 'All',
+                marker: {
+                    color: 'green',
+                },
+              };
+            data.push(trace);
+            if(valid_shape_selection.length>=1){
+                var trace = {
+                    x: valid_shape_selection,
+                    type: 'histogram',
+                    opacity: 0.6,
+                    name: 'Selection',
+                    marker: {
+                        color: 'red',
+                    },
+                };
+                data.push(trace);
+            }
+        }
+        var layout = {
+            barmode: "overlay", 
+            title: "Score distribution",   
+            xaxis: {title: "Score"}, 
+            yaxis: {title: "Count"}
+        };
+        Plotly.newPlot('statistic', data, layout);
+    }
+
+    function simple_statistics(){
+        if(shape_ready==false) return;
+        //var valid_shape_all = select_valid_shape(shape_values, 0, shape_values.length-1);
+        var valid_shape = [];
+        var range_str = "";
+        if(range.length==2){
+            valid_shape = select_valid_shape(shape_values, range[0], range[1]);
+            range_str = String(range[0])+"-"+String(range[1]);
+        }
+        else{
+            valid_shape = select_valid_shape(shape_values, 0, shape_values.length-1);
+            range_str = String(1)+"-"+String(shape_values.length);
+        }
+
+        var min, max, mean, median;
+        if(valid_shape.length==0){
+            min = "NaN";
+            max = "NaN";
+            mean = "NaN";
+            median = "NaN";
+        }else{
+            min = math.min(valid_shape).toFixed(2);
+            max = math.max(valid_shape).toFixed(2);
+            mean = math.mean(valid_shape).toFixed(2);
+            median = math.median(valid_shape).toFixed(2);
+        }
+
+        var dataToShow = [ range_str, valid_shape.length, min, max, mean, median ];
+        var objs = document.getElementsByClassName('table-data-to-set');
+        for(var i=0;i<objs.length;i++){
+            objs[i].innerHTML = dataToShow[i];
+        }
+    }
+
+    /* 搜索序列, Search按钮响应 */
+    function locate_search(){
+        var start = 0;
+        if(range.length==2)
+            start = range[0]+1;
+        clear_selection();
+
+        var seq_to_search = $('#to_search_seq').val().trim().toUpperCase();
+        if(seq_to_search==""){ 
+            alerter("Warning", "Please input sequence", "warning");
+            return;
+        }
+
+        //var full_seq = "";
+        //$('.inner-bound').each(function(i, obj) {
+        //    full_seq += obj.children[0].innerHTML;
+        //});
+        var full_seq = sequence.toUpperCase();
+        var i = full_seq.indexOf(seq_to_search, start);
+        if(i==-1){ 
+            alerter("Warning", "Sequence not found", "warning");
+            return;
+        }
+        else{
+            range.push(i);
+            range.push(i+seq_to_search.length-1);
+            highlight();
+        }
+    }
+
+    display_sequence(sequence, parseInt("{{cds_start}}"), parseInt("{{cds_end}}"));
+
+    /* 当一个碱基被点击时的动作 */
+    $('.inner-bound').on('click', function(){
+        console.log("click")
+        var clicked_obj = this;
+        //$('.inner-bound').each(function(i, obj) {
+        for(var i=0;i<base_objs.length;i++){
+            var obj = base_objs[i].get()[0];
+            if(obj==clicked_obj){
+                if(range.length==0){
+                    range.push(i);
+                    obj.style.backgroundColor = '#2196f3';
+                }
+                else if(range.length==1)
+                {
+                    if(range[0]==i){
+                        range.pop();
+                        obj.style.backgroundColor = '#fff';
+                    }
+                    else{
+                        range.push( Math.max(i, range[0]) );
+                        range[0] = Math.min(i, range[0]);
+                        highlight();
+                    }
+                }else{
+                    if(range[0]==i){
+                        range[0] = range[1];
+                        range.pop();
+                        dehighlight();
+                    }else if(range[1]==i){
+                        range.pop();
+                        dehighlight();
+                    }
+                }
+                return; 
+            }
+        };
+    });
+
+
+    function load_paper_list(paper_list, doi_list){
+        var paper_selection_obj = document.getElementById('paper_selection');
+        for(var i=0;i<paper_list.length;i++){
+            var option = document.createElement('option');
+            option.text = paper_list[i];
+            option.value = doi_list[i];
+            paper_selection_obj.add(option);
+        }
+    }
+
+    load_paper_list(eval("{{paper_list|safe}}"), eval("{{doi_list|safe}}"));
+
+
+    function load_dataset(){
+        $('#dataset_selection').find('option:not(:first)').remove();
+        var i = document.getElementById("paper_selection").selectedIndex;
+        var options = document.getElementById("paper_selection").options;
+        var opt_obj = options[i];
+        if(i==0){
+            $('#paper_info').addClass('d-none');
+            clear_shape();
+            return;
+        }else{
+            $('#paper_info').removeClass('d-none');
+        }
+        $.ajax({
+            type: 'get',
+            url: "query_dataset/?doi="+opt_obj.value+"&datatype=score&strand="+strand+"&species="+species,
+            dataType: 'json',
+            success: function(data, status){
+                var datasets = data['datasets']
+                var dataset_selection_obj = document.getElementById('dataset_selection');
+                for(var i=0;i<datasets.length; i++){
+                    var option = document.createElement('option');
+                    option.text = datasets[i]['condition'];
+                    option.value = datasets[i]['filePath'];
+                    dataset_selection_obj.add(option);
+                }
+            }
+        });
+
+        /*设置Paper的信息*/
+        $.ajax({
+            type: 'get',
+            url: "query_paperinfo/?doi="+opt_obj.value+"&species="+species,
+            dataType: 'json',
+            success: function(data, status){
+                $('#pi_journal').html( data['journal'] );
+                $('#pi_year').html( data['year'] );
+                $('#pi_authors').html( data['authors'] );
+                $('#pi_doi').html( data['doi'] );
+                $('#pi_doi').attr('href', "http://doi.org/"+data['doi']);
+                $('#pi_techname').html( "" );
+                $('#pi_reagent').html( "" );
+                $('#pi_cellline').html( "" );
+                $('#pi_condition').html( "" );
+                $('#pi_datasource').html( "" );
+            }
+        });
+    }
+
+    function load_legend(color_list, lower, upper){
+        var legend = '';
+        for(var i=0;i<color_list.length;i++){
+            legend += '<span class="mx-0 px-0" style="background-color:'+color_list[i]+';width:1px;height:20px;float:left;">&nbsp;</span>';
+        }
+        legend += '&nbsp;<span><span style="color:#4747B6;">'+lower+'</span>-<span style="color:#B64747;">'+upper+'</span></span>';
+        legend += '&nbsp;&nbsp;<span class="px-0" style="background-color:#9e9e9e;width:5px;height:20px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="ml-1" style="color:#9e9e9e">No data</span>'
+        $('#legend').html(legend);
+    }
+
+    function query_load_shape(){
+        var i = document.getElementById("dataset_selection").selectedIndex;
+        var options = document.getElementById("dataset_selection").options;
+        var opt_obj = options[i];
+        if(i==0){
+            $('#pi_techname').html( "" );
+            $('#pi_reagent').html( "" );
+            $('#pi_cellline').html( "" );
+            $('#pi_condition').html( "" );
+            $('#pi_datasource').html( "" );
+            clear_shape();
+            return;
+        }
+        
+        $.ajax({
+            type: 'get',
+            url: "query_score/?species="+species+"&db_tid="+db_tid+"&bw="+opt_obj.value,
+            dataType: 'json',
+            async: true,
+            beforeSend: function (){
+                $('#model_wait_spinner').modal('show');
+            },
+            success: function(data, status){
+                var score = data['score'];
+                var colors = data['colors'];
+                var legend_color_list = data['color_list'];
+                var lower = data['lower'];
+                var upper = data['upper'];
+
+                shape_ready = true;
+                shape_values = score;
+                set_shape_colors(colors);
+                set_shape_tooltip();
+                load_legend(legend_color_list, lower, upper);
+                histogram();
+                simple_statistics();
+                $('[data-toggle="tooltip"]').tooltip();
+                console.log("hide modal");
+                setTimeout(function(){$('#model_wait_spinner').modal('hide');}, 1000);
+            }
+        });
+
+        /*设置Paper的信息*/
+        $.ajax({
+            type: 'get',
+            url: "query_paperinfo_dataset/?filePath="+opt_obj.value,
+            dataType: 'json',
+            success: function(data, status){
+                $('#pi_techname').html( data['techname'] );
+                $('#pi_reagent').html( data['reagent'] );
+                $('#pi_cellline').html( data['cellline'] );
+                $('#pi_condition').html( data['condition'] );
+                $('#pi_datasource').html( data['datasource'] );
+            }
+        });
+    }
+
+    function select_x_axis(){
+        if(shape_ready==false){
+            alerter("Error", "Please load probing data at first");
+            //alert("Please load probing data at first");
+            return;
+        }
+
+        var paper_selection = document.getElementById("paper_selection");
+        var dataset_selection = document.getElementById("dataset_selection");
+        var paper_info = paper_selection.options[paper_selection.selectedIndex].text;
+        var dataset_info = dataset_selection.options[dataset_selection.selectedIndex].text;
+
+        $('#x_axis_title').val("["+paper_info+"] ["+dataset_info+"]");
+        x_axis_values = shape_values;
+        set_compare_table();
+        try_scatter();
+    }
+
+    function select_y_axis(){
+        if(shape_ready==false){
+            alerter("Error", "Please load probing data at first");
+            //alert("Please load probing data at first");
+            return;
+        }
+        var paper_selection = document.getElementById("paper_selection");
+        var dataset_selection = document.getElementById("dataset_selection");
+        var paper_info = paper_selection.options[paper_selection.selectedIndex].text;
+        var dataset_info = dataset_selection.options[dataset_selection.selectedIndex].text;
+
+        $('#y_axis_title').val("["+paper_info+"] ["+dataset_info+"]");
+        y_axis_values = shape_values;
+        set_compare_table();
+        try_scatter();
+    }
+
+    function set_compare_table(value_list=['NaN','NaN','NaN','NaN','NaN','NaN','NaN','NaN','NaN','NaN']){
+        var objs = document.getElementsByClassName('compare_table');
+        for(var i=0;i<objs.length;i++){
+            objs[i].innerHTML = value_list[i];
+        }
+    }
+
+    function try_scatter(){
+        if( x_axis_values.length==0 ||  y_axis_values.length==0 ){
+            return;
+        }
+        if(x_axis_values.length!=y_axis_values.length){
+            alerter("Error", "x_axis_values length != y_axis_values.length");
+            //alert("x_axis_values length != y_axis_values.length")
+        }
+        var location = {    'A-x':[], 'A-y':[], 
+                            'T-x':[], 'T-y':[],
+                            'C-x':[], 'C-y':[],
+                            'G-x':[], 'G-y':[] };
+        var names = { 'A':[], 'T':[], 'C':[], 'G':[] };
+
+        var start = 0;
+        var end = x_axis_values.length;
+        if(range.length==2)
+        {
+            start = range[0];
+            end = range[1]+1;
+        }
+
+        var alphabet = ['A','T','C','G'];
+        for(var i=start;i<end;i++){
+            if(x_axis_values[i]!='NULL' && y_axis_values[i]!='NULL')
+            {
+                var base = sequence[i].toUpperCase();
+                if(base=="U")
+                    base = "T";
+                if(alphabet.includes(base))
+                {
+                    location[base+"-x"].push( parseFloat(x_axis_values[i]) );
+                    location[base+"-y"].push( parseFloat(y_axis_values[i]) );
+                    names[base].push( String(i+1) );
+                }
+            }
+        }
+        if(location['A-x'].length+location['T-x'].length+location['C-x'].length+location['G-x'].length==0){
+            alerter("Error", "No common nucleotides have scores");
+            //alert("No common nucleotides have scores");
+            return;
+        }
+
+        var trace1 = {
+            x: location['A-x'],
+            y: location['A-y'],
+            mode: 'markers',
+            type: 'scatter',
+            text: names['A'],
+            name: "A",
+            opacity: 0.6,
+            marker: { size: 12, color: '#ff5722' }
+        };
+
+        var trace2 = {
+            x: location['T-x'],
+            y: location['T-y'],
+            mode: 'markers',
+            type: 'scatter',
+            text: names['T'],
+            name: "T",
+            opacity: 0.6,
+            marker: { size: 12, color: '#00bcd4' }
+        };
+
+        var trace3 = {
+            x: location['C-x'],
+            y: location['C-y'],
+            mode: 'markers',
+            type: 'scatter',
+            text: names['C'],
+            name: "C",
+            opacity: 0.6,
+            marker: { size: 12, color: '#673ab7' }
+        };
+
+        var trace4 = {
+            x: location['G-x'],
+            y: location['G-y'],
+            mode: 'markers',
+            type: 'scatter',
+            text: names['G'],
+            name: "G",
+            opacity: 0.6,
+            marker: { size: 12, color: '#009688' }
+        };
+
+        var layout = {
+            title:'Compare two set of Probing scores',
+            autosize: false,
+            width: 500,
+            height: 500,
+            margin: {
+                l: 50,
+                r: 50,
+                b: 100,
+                t: 100,
+                pad: 4
+              },
+            xaxis: {
+                title: {
+                    text:$('#x_axis_title').val()
+                }
+            },
+            yaxis: {
+                title: {
+                    text:$('#y_axis_title').val()
+                }
+            },
+        };
+        
+        Plotly.newPlot('scatter', [trace1, trace2, trace3, trace4], layout,{scrollZoom: true});
+
+        var x = []; var y= [];
+        x = x.concat(location['A-x']); y = y.concat(location['A-y']);
+        x = x.concat(location['T-x']); y = y.concat(location['T-y']);
+        x = x.concat(location['C-x']); y = y.concat(location['C-y']);
+        x = x.concat(location['G-x']); y = y.concat(location['G-y']);
+
+        var statistic_values = [
+            String(start+1)+"-"+String(end),
+            math.min(x).toFixed(4),
+            math.min(y).toFixed(4),
+            math.max(x).toFixed(4),
+            math.max(y).toFixed(4),
+            math.mean(x).toFixed(4),
+            math.mean(y).toFixed(4),
+            math.median(x).toFixed(4),
+            math.median(y).toFixed(4),
+            pearsonCorrelation([x, y],0,1).toFixed(4)
+        ];
+        set_compare_table(statistic_values);
+    }
+
+
+    function fill_ADA_form(){
+        if(range.length==2){
+            //subseq = 
+            $('#ADA_seq').html( sequence.slice(range[0],range[1]+1) );
+            if(shape_ready)
+                $('#ADA_score').html( shape_values.slice(range[0],range[1]+1).join(',') );
+            else{
+                var shape_array = [];
+                for(var i=range[0];i<range[1]+1;i++) shape_array.push('NULL');
+                $('#ADA_score').html( shape_array.join(',') );
+            }
+        }else{
+            $('#ADA_seq').html( sequence );
+            if(shape_ready)
+                $('#ADA_score').html( shape_values.join(',') );
+            else{
+                var shape_array = [];
+                for(var i=0;i<sequence.length;i++) shape_array.push('NULL');
+                $('#ADA_score').html( shape_array.join(',') );
+            }
+        }
+        return true;
+    }
+
+    $('#ADA_form').submit(function(e){
+        e.preventDefault();
+        $.ajax({
+            url:'/api/update_align_seq/',
+            type:'post',
+            data:$('#ADA_form').serialize(),
+            success:function(data, status){
+                //whatever you wanna do after the form is successfully submitted
+                if(data['error_code']!=0){
+                    alerter("Error", data['error_text']);
+                    //alert(data['error_text']);
+                }else{
+                    set_user_alignment_cache_num();
+                }
+            }
+        });
+        $('#ADA').modal('hide');
+    });
+
+    $('#copybtn').on('click', function(){
+        if(range.length==2){
+            copyToClipboard(sequence.slice(range[0], range[1]+1));
+        }else{
+            copyToClipboard(sequence);
+        }
+        alerter("Success", "Sequence have been copied to clipboard", 'success');
+    });
+
+    $('#downloadbtn').on('click', function(){
+        var start = 0; 
+        var end = sequence.length;
+        if(range.length==2){
+            start = range[0];
+            end = range[1]+1;
+        }
+        var lines = [];
+        var line = "";
+        for(var i=start;i<end;i++)
+        {
+            line = tid+"\t"+String(i+1)+"\t"+sequence[i];
+            if(shape_ready)
+                line += "\t"+shape_values[i];
+            line += "\n";
+            lines.push(line);
+        }
+        var bb = new Blob(lines, { type: 'text/plain' });
+        var a = document.createElement('a');
+        a.download = 'download.txt';
+        a.href = window.URL.createObjectURL(bb);
+        a.click();
+
+        alerter("Success", "Sequence have been downloaded successfully", 'success');
+    });
+
+</script>
+<script src="{% static 'js/plotly-latest.min.js' %}"></script>
+<script src="{% static 'js/pearson-correlation.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/6.6.1/math.min.js"></script>
+
+
+{% endblock main %}

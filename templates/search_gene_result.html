@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<title>Gene Search Result</title>
+{% endblock head %}
+
+{% block main %}
+
+<div class="container-fluid" id="search_gene_content">
+    
+    <div class="mb-3">
+        <div class="card">
+            <div class="card-header py-1 mb-0">
+                <h4 class="mb-0 text-secondary d-inline-block py-2" style="text-decoration:none;">
+                    Summary of query
+                </h4>
+            </div>
+            <div class="row p-2">
+                <div class="col-lg-4">
+                    <div class="col-lg text-secondary larger-text"><span class="font-weight-bold">Search term:</span> {{ query_str }}</div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="col-lg text-secondary larger-text"><span class="font-weight-bold">Search species:</span> {{ species }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="mb-3">
+        <div class="card">
+            <div class="card-header py-1 mb-0" data-step="1" data-intro="The top 100 matches will be shown at here" data-position='bottom'>
+                <h4 class="mb-0 text-secondary d-inline-block py-2" style="text-decoration:none;">
+                    Query results
+                </h4>
+            </div>
+            <div style="overflow-x:scroll;">
+                {% if findmatch %}
+                <table class="table mb-0 larger-text text-center">
+                    <thead>
+                        <tr>
+                            <th class="pale-red" data-step="2" data-intro="The matched species" data-position='right'>Species</th>
+                            <th class="pale-blue" data-step="3" data-intro="The match region" data-position='right'>Region</th>
+                            <th class="pale-yellow" data-step="4" data-intro="Matched gene symbol, gene id or transcript id" data-position='right'>Match</th>
+                            <th class="pale-green" data-step="5" data-intro="Gene which overlap with this region" data-position='left'>Gene</th>
+                            <th class="pale-purple" data-step="6" data-intro="Transcripts which overlap with this region. Users can click to view and analyze the probing scores within this transcript." data-position='left'>Transcript</th>
+                            <th data-step="7" data-intro="Skip to this region on Browser" data-position='left'>Browse</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for match in matches %}
+                        <tr>
+                            <td class="pale-red">{{ match.species }}</td>
+                            <td class="text-monospace pale-blue">{{ match.region }}</td>
+                            <td class="pale-yellow">{{ match.target }}</td>
+                            <td class="pale-green">{{ match.gene_symbol }}</td>
+                            <td class="pale-purple">
+                                {% for transinfo in match.trans_matches %}
+                                <a data-toggle="tooltip" class="text-primary" data-placement="top" title="{{transinfo.tid}} {{transinfo.biotype}}" href="{{transinfo.link}}" target="_blank">#{{forloop.counter}}</a>
+                                {% endfor %}
+                            </td>
+                            <td class=""><a href="{{ match.link }}" class="p-0 m-0 text-primary">Go</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="container py-2 text-center">
+                    <span>Sorry, your query has no result</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    $('#search_sb').addClass('active');
+    setTimeout(function(){ $('[data-toggle="tooltip"]').tooltip(); }, 1000);
+</script>
+
+{% endblock main %}

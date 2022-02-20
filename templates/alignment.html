@@ -1,0 +1,527 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<title>Alignment</title>
+{% endblock head %}
+
+{% block main %}
+
+<div id="waiting" style="display: none">
+</div>
+
+<form action="proc_alignment/" method="post" id="subform">
+	{% csrf_token %}
+
+	<h3 class="text-center mb-2" ><span style="font-family: Arial, Helvetica, sans-serif">Sequence Alignment</span></h3>
+
+	<div class="row mb-3">
+		<div class="col-lg-6" data-step="1" data-intro="Input your sequence here in fasta format. 2~3 seuquences are permitted" data-position='right'>
+			<textarea class="border rounded text-input-pale-blue w-100" style="height:50vh;" name="sequence" placeholder="Fasta sequence here...(At most three sequences are allowed)&#10;>rna1&#10;ATGCTAGACTAGCATGC&#10;>rna2&#10;ACTGACTCGATGCTGC" id="sequence" required></textarea>
+		</div>
+		<div class="col-lg-6" data-step="2" data-intro="Input your scores here. Seperated with blank." data-position='left'>
+			<textarea class="border rounded text-input-pale-blue w-100" style="height:50vh;" name="score" placeholder="Scores here (seperated by blank or break, At most three sequences are allowed)...&#10;>rna1&#10;0.453&nbsp;0.581&nbsp;0.99&nbsp;NULL&nbsp;0.67&#10;...>rna2&#10;0.453&nbsp;0.581&nbsp;0.99&nbsp;NULL&nbsp;0.67&nbsp;..." id="score" required></textarea>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-lg-6">
+			<button class="btn btn-outline-secondary btn-block btn-outline-dark-blue" onclick="give_example()" type="button">Example</button>
+		</div>
+		<div class="col-lg-6">
+			<input type="button" class="btn btn-outline-secondary btn-block btn-outline-dark-blue" value="Submit" id="submit_btn">
+		</div>
+	</div>
+</form>
+
+<div class="container-fluid my-3 px-0" id="disp" data-step="3" data-intro="If you save [Add] a sequence in TranView page, it will show at here" data-position='left'>
+	<div id="ta_0" class="mb-3" style="display:block;">
+	  <div class="card">
+		<div class="card-header py-1 mb-0 position-relative" id="heading0" style="background-color: #e8f3f9;">
+		  <h5 class="mb-0 d-inline-block">
+			<button class="btn btn-link" data-toggle="collapse" data-target="#collapse0" aria-expanded="true" aria-controls="collapse0" style="text-decoration: none;">
+				<h4 class="mb-0" style="text-decoration:none;color:#2196f3"><i class="fas fa-feather-alt"></i>&nbsp;How to load data from transcript summary page</h4>
+			</button>
+		  </h5>
+		</div>
+		<div id="collapse0" class="collapse hide" aria-labelledby="heading0" data-parent="#ta_0">
+		  	<div class="card-body">
+				<p>Users can manually enter the sequence and structure score to make a multiple alignment, or add the sequences from the transcipt summary page. Here is an example:</p>
+				<ol>
+					<li>Go to transcript summary page of RPS8 transcript from human and mouse (<a href="http://rasp.zhanglab.net/transView/?species=hg38&tid=2704" target="_blank" class="text-info"><b>Human</b></a>) (<a href="http://rasp.zhanglab.net/transView/?species=mm10&tid=73080" target="_blank" class="text-info"><b>Mouse</b></a>) </li>
+					<li>Scroll to <b>Load probing data</b> panel and select the dataset<br>
+						<div class="text-center">
+							<div class="d-inline-block" style="max-width: 1000px">
+								<img src="/static/img/tutorial/alignment/1-select_dataset.png" alt="Load probing data" style="max-width: 100%;" />
+							</div>
+						</div>
+					</li>
+					<li>After the structure score loaded, scroll to <b>Sequence</b> panel and select a region.<br>
+						<div class="text-center">
+							<div class="d-inline-block" style="max-width: 1000px">
+								<img src="/static/img/tutorial/alignment/2-select_region.png" alt="Select a region" style="max-width: 100%;" />
+							</div>
+						</div>
+					</li>
+					<li>Click the <b>Add</b> button to save the sequence and structure score<br>
+						<div class="text-center">
+							<div class="d-inline-block" style="max-width: 1000px">
+								<img src="/static/img/tutorial/alignment/3-save.png" alt="Save sequence and shape" style="max-width: 100%;" />
+							</div>
+						</div>
+					</li>
+					<li>Go to <b>Alignment</b> page and load RPS8 sequence and structure score<br>
+						<div class="text-center">
+							<div class="d-inline-block" style="max-width: 1000px">
+								<img src="/static/img/tutorial/alignment/4-load_human_mouse.png" alt="load_human_mouse" style="max-width: 100%;" />
+							</div>
+						</div>
+					</li>
+					<li>Click <b>Submit</b> button to align the sequences<br>
+						<div class="text-center">
+							<div class="d-inline-block" style="max-width: 1000px">
+								<img src="/static/img/tutorial/alignment/5-click_submit.png" alt="click_submit" style="max-width: 100%;" />
+							</div>
+						</div>
+					</li>
+					<li><b>Warning: Each user can save 3 sequences at most.</b></li>
+				</ol>
+		 	</div>
+		</div>
+	  </div>
+	</div>
+
+	<div id="ta_1" class="mb-3" style="display:none;">
+	  <div class="card">
+		<div class="card-header py-1 mb-0 position-relative" id="heading1">
+		  <h5 class="mb-0 d-inline-block">
+			<button class="btn btn-link" data-toggle="collapse" data-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
+				<h4 class="mb-0 text-secondary" style="text-decoration:none;" onclick="javascript:toggle_collapse(1);"><span id="ta_name1"></span>&nbsp;<i class="fas fa-angle-double-down" aria-hidden="true" id="collapse_logo1"></i></h4>
+			</button>
+		  </h5>
+		  <button type="button" class="close position-absolute" style="right:10px;top:50%;transform: translate(-50%, -50%);" aria-label="Close" onclick="close_ta(1);">
+			<span>&times;</span>
+		  </button>
+		</div>
+		<div id="collapse1" class="collapse hide" aria-labelledby="heading1" data-parent="#ta_1">
+		  <div class="card-body">
+				<div class="row p-3">
+					<div class="col-lg-6">
+						<textarea id="ta_seq1" class="border rounded text-input-pale-blue w-100 text-monospace" style="min-height: 200px; border:6px solid; resize: none;" readonly></textarea>
+					</div>
+					<div class="col-lg-6">
+						<textarea id="ta_score1" class="border rounded text-input-pale-blue w-100 text-monospace" style="min-height: 200px; border:6px solid; resize: none;" readonly></textarea>
+					</div>
+				</div>
+				<div class="row px-3">
+					<div class="col-lg-2 offset-lg-10">
+						<button class="btn btn-block btn-secondary" onclick="add_ta(1);">Add</button>
+					</div>
+				</div>
+		  </div>
+		</div>
+	  </div>
+	</div>
+
+	<div id="ta_2" class="mb-3" style="display:none;">
+	  <div class="card">
+		<div class="card-header py-1 mb-0 position-relative" id="heading2">
+		  <h5 class="mb-0 d-inline-block">
+			<button class="btn btn-link" data-toggle="collapse" data-target="#collapse2" aria-expanded="true" aria-controls="collapse2">
+				<h4 class="mb-0 text-secondary" style="text-decoration:none;" onclick="javascript:toggle_collapse(2);"><span id="ta_name2"></span>&nbsp;<i class="fas fa-angle-double-down" aria-hidden="true" id="collapse_logo2"></i></h4>
+			</button>
+		  </h5>
+		  <button type="button" class="close position-absolute" style="right:10px;top:50%;transform: translate(-50%, -50%);" aria-label="Close" onclick="close_ta(2);">
+			<span>&times;</span>
+		  </button>
+		</div>
+		<div id="collapse2" class="collapse hide" aria-labelledby="heading2" data-parent="#ta_2">
+		  <div class="card-body">
+				<div class="row p-3">
+					<div class="col-lg-6">
+						<textarea id="ta_seq2" class="border rounded text-input-pale-blue w-100 text-monospace" style="min-height: 200px; border:6px solid; resize: none;" readonly></textarea>
+					</div>
+					<div class="col-lg-6">
+						<textarea id="ta_score2" class="border rounded text-input-pale-blue w-100 text-monospace" style="min-height: 200px; border:6px solid; resize: none;" readonly></textarea>
+					</div>
+				</div>
+				<div class="row px-3">
+					<div class="col-lg-2 offset-lg-10">
+						<button class="btn btn-block btn-secondary" onclick="add_ta(2);">Add</button>
+					</div>
+				</div>
+		  </div>
+		</div>
+	  </div>
+	</div>
+
+	<div id="ta_3" class="mb-3" style="display:none;">
+	  <div class="card">
+		<div class="card-header py-1 mb-0 position-relative" id="heading3">
+		  <h5 class="mb-0 d-inline-block">
+			<button class="btn btn-link" data-toggle="collapse" data-target="#collapse3" aria-expanded="true" aria-controls="collapse3">
+				<h4 class="mb-0 text-secondary" style="text-decoration:none;" onclick="javascript:toggle_collapse(3);"><span id="ta_name3"></span>&nbsp;<i class="fas fa-angle-double-down" aria-hidden="true" id="collapse_logo3"></i></h4>
+			</button>
+		  </h5>
+		  <button type="button" class="close position-absolute" style="right:10px;top:50%;transform: translate(-50%, -50%);" aria-label="Close" onclick="close_ta(3);">
+			<span>&times;</span>
+		  </button>
+		</div>
+		<div id="collapse3" class="collapse hide" aria-labelledby="heading3" data-parent="#ta_3">
+		  <div class="card-body">
+				<div class="row p-3">
+					<div class="col-lg-6">
+						<textarea id="ta_seq3" class="border rounded text-input-pale-blue w-100 text-monospace" style="min-height: 200px; border:6px solid; resize: none;" readonly></textarea>
+					</div>
+					<div class="col-lg-6">
+						<textarea id="ta_score3" class="border rounded text-input-pale-blue w-100 text-monospace" style="min-height: 200px; border:6px solid; resize: none;" readonly></textarea>
+					</div>
+				</div>
+				<div class="row px-3">
+					<div class="col-lg-2 offset-lg-10">
+						<button class="btn btn-block btn-secondary" onclick="add_ta(3);">Add</button>
+					</div>
+				</div>
+		  </div>
+		</div>
+	  </div>
+	</div>
+</div>
+
+<div class="container-fluid my-3 px-0" id="summary_cont" style="display:none;">
+	<div class="alert alert-danger" role="alert">
+  		<h4 class="alert-heading">Caution</h4>
+  		<p class="mb-0">We didn't normalize different signals across different structure probing methods, so direct comparisons across different methods are not recommended.</p>
+	</div>
+</div>
+
+<div style="display:none;flex-wrap:wrap;" class="container-fluid border border-secondary" id="align_view"></div>
+
+<script type="text/javascript">
+	$('#alignment_sb').addClass('active');
+
+	let aligned_data = {};
+
+	function create_summary_part(name_list, color_list)
+	{
+
+		var container = $('<div class="border border-secondary border-top-0 rounded shadow-sm bg-white mb-3"  data-step="1" data-intro="Lengends. Users can download the alignment result by clicking the [Download] button" data-position="bottom"></div>');
+		var title = $('<div class="light-gray p-2 pl-3 font-weight-bold text-dark-blue"></div>');
+		title.html('Legend');
+		container.append(title);
+		for(var i=0;i<name_list.length;i++)
+		{
+			var row = $('<div class="row p-2"></div>');
+			var seq_name_cont = $('<div class="col-md-5 text-secondary"></div>');
+			var seq_name = $('<span class="font-weight-bold"></span>');
+			seq_name.html(name_list[i]);
+			seq_name_cont.append(seq_name);
+			var colorbar_cont = $('<div class="col-md-7"></div>');
+			var colorbar = $('<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
+			colorbar.css('background-color', color_list[i]);
+			colorbar_cont.append(colorbar);
+			row.append(seq_name_cont);
+			row.append(colorbar_cont);
+			container.append(row);
+		}
+		var row = $('<div class="row p-2"></div>');
+		var col = $('<div class="col-md-12"></div>');
+		var btn = $('<button onclick="download();" class="btn btn-secondary"><i class="fas fa-download"></i> Download</button>');
+		col.append(btn);
+		row.append(col);
+		container.append(row);
+
+		$('#summary_cont').append(container);
+		$('#summary_cont').show();
+	}
+
+	function toggle_collapse(ID){
+		$('#collapse_logo'+String(ID)).toggleClass('fa-angle-double-down');
+		$('#collapse_logo'+String(ID)).toggleClass('fa-angle-double-up');
+		return true;
+	}
+
+	function update_tas(){
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				var data = JSON.parse(this.responseText)['data'];
+				console.log(data);
+				for(var i=0;i<3;i++)
+				{
+					if(i<data.length){
+						$('#ta_name'+String(i+1)).html( data[i][0] );
+						$('#ta_seq'+String(i+1)).val( data[i][1] );
+						$('#ta_score'+String(i+1)).val( data[i][2].replace(/,/g, ' ') );
+						console.log('#ta_'+String(i+1)+" remove d-npne");
+						$('#ta_'+String(i+1)).show();
+					}else{
+						$('#ta_'+String(i+1)).hide();
+					}
+				}
+			}
+		};
+		xhttp.open("GET", "/api/get_align_seq/", true);
+		xhttp.send();
+	}
+
+	update_tas();
+
+	function close_ta(ID){
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				var data = JSON.parse(this.responseText);
+				if(data['error_code']!=0)
+					alerter("Error", data['error_text']);
+					//alert(data['error_text']);
+			}
+		};
+		var seq_name = $('#ta_name'+String(ID)).html();
+		xhttp.open("GET", "/api/delete_align_seq/?name="+seq_name, false);
+		xhttp.send();
+
+		update_tas();
+		set_user_alignment_cache_num();
+		//set_alignment_num();
+	}
+
+	function add_ta(ID){
+		var seq_content = $('#sequence').val();
+		var score_content = $('#score').val();
+
+		var name = $('#ta_name'+String(ID)).html();
+		var seq = $('#ta_seq'+String(ID)).val();
+		var score = $('#ta_score'+String(ID)).val();
+
+		$('#sequence').val( seq_content + "\n>" + name + "\n" + seq );
+		$('#score').val( score_content + "\n>" + name + "\n" + score );
+	}
+
+	function create_an_alignment_block(base_list, score_list, score_show, color_list, pos_list=[null,null,null,null,null]){
+		var bigblock = $('<div style="width:35px;margin-bottom:20px;margin-top:20px;"></div>');
+		for(var i=0;i<base_list.length;i++)
+		{
+			var h = 0;
+			var bc = color_list[i];
+			var tc = color_list[i];
+			if(score_list[i]=='NULL' || base_list[i]=='-'){
+				h = '30';
+				bc = '#e3e3e3';
+			}else{
+				h = String( (score_list[i]*30).toFixed(1) );
+			}
+			var s = String(score_show[i]);
+			var base_elem = $('<div class="text-center" style="color:'+tc+';line-height:1.1;">'+base_list[i]+'</div>');
+			var shape_container = $('<div style="height:30px;" class="position-relative" data-toggle="tooltip" data-placement="top" title="'+s+'"></div>');
+
+			var shape_bar = $('<div class="w-100 position-absolute" style="height:'+h+'px;background-color:'+bc+';bottom:0;border-bottom:1px solid '+bc+';"></div>');
+
+			shape_container.append(shape_bar);
+			if (pos_list[i] !== null)
+			{
+				var pos_container = $('<span class="position-absolute" style="line-height:1;top:50%;left:50%;transform:translate(-50%, -50%);z-index:999"></span>');
+				pos_container.html( String(pos_list[i]) );
+				shape_container.append(pos_container);
+			}
+			bigblock.append(base_elem);
+			bigblock.append(shape_container);
+
+		}
+		return bigblock;
+	}
+
+	function waiting(){
+		$('#waiting').html( '<div class="spinner-border spinner-border mx-auto d-block" style="width:100px;height:100px;"></div><div class="text-center mt-2 larger-text">Please waiting...</div>' );
+		$('#waiting').show();
+	}
+
+	function get_cookie_byname(key){
+		var cookie_list = document.cookie.split("; ");
+		for(var i=0;i<cookie_list.length;i++)
+		{
+			var keyvalue = cookie_list[i].split('=');
+			if(keyvalue[0]==key)
+				return keyvalue[1];
+		}
+		return false;
+	}
+
+
+	/* 
+	*
+	*         这里验证序列和SHAPE是没有问题的
+	*
+	*/
+
+	$('#submit_btn')[0].addEventListener("click", function(event){
+
+		var sequence = $("textarea[name='sequence']").val();
+		var seq_result = valid_textarea_seq(sequence, must_strict_fasta=true, min_seq_num=2, max_seq_num=3, min_length=15, max_length=15000, alphabet=['A','C','T','G','U']);
+
+		if(seq_result['error_type'] != 0)
+		{
+			event.preventDefault();
+			alerter("Error", seq_result['error_msg']);
+			return false;
+		}
+
+		var score_text = $("textarea[name='score']").val();
+		var score_result = valid_textarea_score(score_text, must_strict_fasta=true, min_score_num=2, max_score_num=3, min_length=15, max_length=15000)
+
+		if(score_result['error_type'] != 0)
+		{
+			event.preventDefault();
+			alerter("Error", score_result['error_msg']);
+			return false;
+		}
+
+		var seq_keys = Object.keys(seq_result['sequence']);
+		var score_keys = Object.keys(score_result['scoredict']);
+
+		seq_keys.sort();
+		score_keys.sort();
+
+		if( seq_keys.length != score_keys.length )
+		{
+			alerter("Error", "Different keys for sequence and score");
+			return false;
+		}
+
+		for(var i=0;i<seq_keys.length;i++){
+			if(seq_keys[i]!=score_keys[i])
+			{
+				alerter("Error", "Different keys for sequence and score");
+				return false;
+			}
+			if( seq_result['sequence'][seq_keys[i]].length != score_result['scoredict'][score_keys[i]].length )
+			{
+				console.log( seq_result['sequence'][seq_keys[i]].length );
+				console.log( score_result['scoredict'][score_keys[i]] );
+				alerter("Error", seq_keys[i] + " has different length for score and sequence");
+				return false;
+			}
+		}
+
+		$("#subform").submit();
+		return true;
+	});
+
+	$('#subform').on('submit', function(){
+		$('#subform').hide();
+		$('#disp').hide();
+		waiting();
+	});
+
+	$('#subform').submit(function(e){
+		e.preventDefault();
+		$.ajax({
+			url : 'proc_alignment/', //+$('#sequence').val()+'&score='+$('#score').val(),
+			method: "post",
+			type : 'json',
+			data:$('#subform').serialize(),
+			beforeSend: function(request) {
+				//console.log("Set csrftoken");
+				request.setRequestHeader('X-CSRFToken', get_cookie_byname('csrftoken'));
+				//console.log("Set csrftoken");
+			},
+			success : function (data, status) {
+				//console.log(data);
+				//console.log(status);
+				$('#waiting').hide();
+				if(data['error_code']!=0){
+					alerter("Error", data['error_text']);
+					//alert(data['error_text']);
+					$('#subform').show();
+					return;
+				}
+				data = data['data']
+				$('#subform').remove();
+				$('#disp').remove();
+				var keys = Object.keys(data);
+				var length = data[keys[0]]['seq'].length;
+
+				create_summary_part(keys, ['#673ab7', '#4caf50', '#ff9800']);
+
+				var ind_list = [];
+				for(var i=0;i<keys.length;i++) ind_list.push(0);
+				for(var i=0;i<length;i++)
+				{
+					var base_list = [];
+					var score_list = [];
+					var score_show = [];
+					var color_list = ['#673ab7', '#4caf50', '#ff9800'];
+					var pos_list = [];
+					for(var j=0;j<keys.length;j++)
+					{
+						if(data[keys[j]]['seq'][i] != '-')
+							ind_list[j] += 1;
+						if(ind_list[j]>0 && (ind_list[j]%20==0 || ind_list[j]==1) && data[keys[j]]['seq'][i]!='-'){
+							pos_list.push(ind_list[j]);
+						}else{
+							pos_list.push(null);
+						}
+						base_list.push( data[keys[j]]['seq'][i] );
+						score_list.push( data[keys[j]]['normed_score'][i] );
+						score_show.push( data[keys[j]]['raw_score'][i] );
+					}
+					$('#align_view').append( create_an_alignment_block(base_list, score_list, score_show, color_list, pos_list) );
+				}
+				$('#align_view').css("display", "flex");
+				$(function () {$('[data-toggle="tooltip"]').tooltip()})
+
+				// save as global variable
+				aligned_data = data;
+			}
+		})
+	});
+
+	function download(){
+		var keys = Object.keys(aligned_data);
+		var length = aligned_data[keys[0]]['raw_score'].length;
+
+		var lines = [];
+		var line = "";
+		for(var i=0;i<keys.length;i++)
+		{
+			if(i!=0)
+				line += "\t";
+			line += keys[i]+"_seq\t";
+			line += keys[i]+"_score";
+		}
+		line += "\n";
+		lines.push(line);
+
+		for(var j=0;j<length;j++)
+		{
+			line = "";
+			for(var i=0;i<keys.length;i++)
+			{
+				if(i!=0)
+					line += "\t";
+				line += String(aligned_data[keys[i]]['seq'][j])+"\t";
+				line += String(aligned_data[keys[i]]['raw_score'][j]);
+			}
+			line += "\n";
+			lines.push(line);
+		}
+		var bb = new Blob(lines, { type: 'text/plain' });
+		var a = document.createElement('a');
+		a.download = 'download.txt';
+		a.href = window.URL.createObjectURL(bb);
+		a.click();
+	}
+
+	/* Example */
+	function give_example()
+	{
+		var seq_content = ">MR766-5'UTR\nAGTTGTTGATCTGTGTGAGTCAGACTGCGACAGTTCGAGTCTGAAGCGAGAGCTAACAACAGTATCAACAGGTTTAATTTGGATTTGGAAACGAGAGTTTCTGGTCATGAAAAACCCAAA\n>PRVABC59-5'UTR\nAGTTGTTGATCTGTGTGAATCAGACTGCGACAGTTCGAGTTTGAAGCGAAAGCTAGCAACAGTATCAACAGGTTTTATTTTGGATTTGGAAACGAGAGTTTCTGGTCATGAAAAACCCAA";
+		var score_content = ">MR766-5'UTR\nNULL NULL NULL NULL NULL NULL 0.032 0.0 0.189 0.0 0.0 0.0 0.0 0.0 0.426 0.217 0.617 0.779 1.0 0.153 0.0 0.0 0.0 0.012 0.033 0.123 1.0 0.107 0.142 0.196 0.845 1.0 1.0 1.0 0.252 0.051 0.154 0.068 0.0 0.004 0.0 0.072 0.143 0.382 0.234 0.14 0.022 0.454 0.879 0.875 1.0 0.066 0.456 1.0 0.658 0.826 0.324 1.0 0.606 0.114 0.289 0.314 1.0 0.081 0.029 0.0 0.0 0.029 0.077 0.494 0.241 0.546 0.583 0.938 1.0 1.0 1.0 1.0 1.0 0.725 1.0 0.705 0.292 0.465 1.0 1.0 0.257 0.073 0.0 0.0 0.0 0.0 0.398 0.699 0.311 0.482 0.0 0.0 0.0 0.0 0.0 0.0 0.011 0.0 0.034 0.0 0.321 0.443 0.973 0.569 0.792 0.78 0.59 0.313 0.0 0.0 0.128 0.323 0.843 1.0\n>PRVABC59-5'UTR\nNULL NULL NULL NULL NULL NULL NULL 0.0 0.367 0.584 0.17 0.0 0.0 0.138 0.473 0.642 1.0 1.0 1.0 0.241 0.026 0.076 0.0 0.065 0.0 0.743 1.0 0.113 0.212 0.333 1.0 1.0 1.0 1.0 0.587 0.131 0.243 0.491 0.089 0.095 0.117 0.051 0.148 0.671 0.248 0.005 0.153 0.0 1.0 0.781 0.742 0.009 0.115 0.358 0.49 0.284 0.216 1.0 0.238 0.031 0.084 0.202 1.0 0.314 0.172 0.122 0.011 0.197 0.201 0.291 0.894 1.0 0.57 0.798 1.0 1.0 1.0 1.0 1.0 1.0 0.703 1.0 0.92 0.225 0.446 1.0 1.0 0.312 0.098 0.201 0.079 0.084 0.104 0.496 1.0 0.485 0.626 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.024 0.028 0.0 0.303 0.781 0.893 0.563 0.428 0.972 0.898 0.244 0.0 0.155 0.358 0.112 0.501";
+
+		$('#sequence').val( seq_content );
+		$('#score').val( score_content );
+	}
+
+</script>
+
+{% endblock main %}

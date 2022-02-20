@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<title>Sequence Search Result</title>
+{% endblock head %}
+
+{% block main %}
+
+<div class="container-fluid" id="search_gene_content">
+
+    <div class="mb-3">
+        <div class="card">
+            <div class="card-header py-1 mb-0">
+                <h4 class="mb-0 text-secondary d-inline-block py-2" style="text-decoration:none;">
+                    Summary of query
+                </h4>
+            </div>
+            <div class="row p-2">
+                <div class="col-md-3 col-sm-5">
+                    <div class="col-lg text-secondary larger-text"><span class="font-weight-bold">Query name:</span></div>
+                </div>
+                <div class="col-md-9 col-sm-7">
+                    <div class="col-lg text-secondary larger-text" style="word-break: break-all;">{{ query_name }}</div>
+                </div>
+            </div>
+            <div class="row p-2">
+                <div class="col-md-3 col-sm-5">
+                    <div class="col-lg text-secondary larger-text"><span class="font-weight-bold">Query sequence:</span></div>
+                </div>
+                <div class="col-md-9 col-sm-7">
+                    <div class="col-lg text-secondary larger-text" style="word-break: break-all;">{{ query_seq }}</div>
+                </div>
+            </div>
+            <div class="row p-2">
+                <div class="col-md-3 col-sm-5">
+                    <div class="col-lg text-secondary larger-text"><span class="font-weight-bold">Species:</span></div>
+                </div>
+                <div class="col-md-9 col-sm-7">
+                    <div class="col-lg text-secondary larger-text" style="word-break: break-all;">{{ species }}</div>
+                </div>
+            </div>
+            <div class="row p-2">
+                <div class="col-md-3 col-sm-5">
+                    <div class="col-lg text-secondary larger-text"><span class="font-weight-bold">E-value:</span></div>
+                </div>
+                <div class="col-md-9 col-sm-7">
+                    <div class="col-lg text-secondary larger-text" style="word-break: break-all;">{{ evalue }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <div class="card">
+            <div class="card-header py-1 mb-0" data-step="1" data-intro="The top 100 hits will be shown at here" data-position='bottom'>
+                <h4 class="mb-0 text-secondary d-inline-block py-2" style="text-decoration:none;">
+                    Query results
+                </h4>
+            </div>
+            <div style="overflow-x:scroll;">
+                {% if findmatch %}
+                <table class="table mb-0 larger-text text-center">
+                    <thead>
+                        <tr>
+                        	<th data-step="2" data-intro="The rank of hit. Sorted by e-value" data-position='right'>Hit</th>
+                            <th class="pale-red">Species&Region</th>
+                            <th class="pale-red">E-value</th>
+                            <th class="pale-blue" data-step="3" data-intro="The sequence match between query and target" data-position='right'>Match</th>
+                            <th class="pale-yellow" data-step="4" data-intro="Gene which overlap with this region" data-position='left'>Gene</th>
+                            <th class="pale-purple" data-step="5" data-intro="Transcripts which overlap with this region. Users can click to view and analyze the probing scores within this transcript." data-position='left'>Transcript <span data-toggle="tooltip" data-placement="top" title="Transcripts which overlap with this region. This sequence may be included in the intron."><i class="text-secondary fas fa-question-circle"></i></span></th>
+                            <th data-step="6" data-intro="Skip to this region on Browser" data-position='left'>Browse</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    	{% for hit in hits %}
+                        <tr>
+                        	<td class="align-middle">{{ forloop.counter }}</td>
+                            <td class="pale-red text-monospace align-middle">{{ hit.species_region }}</td>
+                            <td class="pale-red text-monospace align-middle">{{ hit.evalue }}</td>
+                            <td class="text-monospace pale-blue align-middle seqalignment" style="overflow-x:scroll;max-width:25vw;">
+                            	<div class="d-none d-sm-block text-nowrap text-left">{{ hit.match|safe }}</div></td>
+                            <td class="pale-yellow align-middle">{{ hit.gene_symbol }}</td>
+                            <td class="pale-purple align-middle">
+                                {% for transinfo in hit.trans_matches %}
+                                <a data-toggle="tooltip" class="text-primary" data-placement="top" title="trans {{transinfo.tid}} {{transinfo.biotype}}" href="{{transinfo.link}}" target="_blank">#{{forloop.counter}}</a>
+                                {% endfor %}
+                            </td>
+                            <td class="align-middle"><a href="{{ hit.link }}" class="text-primary p-0 m-0">Go</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="container py-2 text-center">
+                    <span>Sorry, your query has no result</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#search_sb').addClass('active');
+    setTimeout(function(){ $('[data-toggle="tooltip"]').tooltip(); }, 1000);
+</script>
+
+{% endblock main %}

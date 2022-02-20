@@ -1,0 +1,1801 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<title>Statistics</title>
+<style>
+.carousel-control-next-icon {
+    background-image: "";
+}
+
+.carousel-control-prev-icon {
+    background-image: "";
+}
+#coverCounterTable td { text-align: center; vertical-align: middle; white-space: nowrap; }
+#coverCounterTable th { text-align: center; vertical-align: middle; }
+#coverCounterTable a { color: #2196f3; }
+</style>
+
+{% endblock head %}
+
+
+{% block main %}
+
+<div class="mb-4">
+    <h2 style="font-family:Roboto; font-weight: bold;">Data sources</h2>
+    <div class="row mb-2">
+        <div class="col-md-6">
+            <label>Reagent</label>
+            <span data-toggle="tooltip" data-placement="top" title="Chemical reagents used to modify RNA" help-toggle="help-toggle"><i class="text-secondary fas fa-question-circle"></i></span>
+            <select class="form-control form-control-lg" id="adv_reagent">
+                <option value="0" checked>All</option>
+                {% for reagent in reagent_list %}
+                <option value="{{reagent}}">{{reagent}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label>Principle</label>
+            <span data-toggle="tooltip" data-placement="top" title="Whether the structural signal is based on RT stop, RT mutation, or enzyme cleavage" help-toggle="help-toggle"><i class="text-secondary fas fa-question-circle"></i></span>
+            <select class="form-control form-control-lg" id="adv_principle">
+                <option value="0" checked>All</option>
+                {% for principle in principle_list %}
+                <option value="{{principle}}">{{principle}}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div id="statistic_table" style="overflow-x: scroll;">
+        <div class="spinner-border text-secondary" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+    <div>
+        <div style="color:#17a2b8">&#9827; Downloaded data</div>
+        <div style="color:#ff9800">&#9827; Processed data according to the description of the paper</div>
+    </div>
+
+    <br>
+    <h2 style="font-family:Roboto; font-weight: bold;">Datasets</h2>
+    <div class="mw-100" style="overflow-x: scroll;">
+        <table class="table table-bordered table-sm" id="coverCounterTable">
+        <thead>
+            <tr>
+                <th rowspan="2">Methods/Resource</th>
+                <th rowspan="2">Data source</th>
+                <th rowspan="2">Reagent</th>
+                <th rowspan="2">Species</th>
+                <th rowspan="2">Cell line / Condition</th>
+                <th rowspan="2">Number of bases with score</th>
+                <th colspan="5">Number of RNAs with scores</th>
+            </tr>
+            <tr>
+                <th>Total</th>
+                <th>mRNA</th>
+                <th>pseudogene</th>
+                <th>lncRNA</th>
+                <th>others</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="http://www.doi.org/10.1038/nature09322" target="_blank">PARS (Nature, 2010)</a></td>
+                <td>Reproduction</td>
+                <td>V1 & S1</td>
+                <td>Yeast</td>
+                <td>S288C in_vivo</td>
+                <td>3,254,906</td>
+                <td>5,661 </td>
+                <td>5,524</td>
+                <td>4</td>
+                <td>0</td>
+                <td>133</td>
+            </tr>
+            <tr>
+                <td rowspan="5" style="vertical-align: middle;"><a href="http://www.doi.org/10.1038/nature12946" target="_blank">PARS (Nature, 2014)</a></td>
+                <td rowspan="5">Reproduction</td>
+                <td rowspan="5">V1 & S1</td>
+                <td rowspan="5">Human</td>
+                <td>GM12878 native deproteinized in_vitro</td>
+                <td>240,200</td>
+                <td>4,804 </td>
+                <td>2,588</td>
+                <td>1</td>
+                <td>750</td>
+                <td>1,465</td>
+            </tr>
+            <tr>
+                <td>GM12878 native deproteinized followed by renatured in_vitro</td>
+                <td>40,879</td>
+                <td>828 </td>
+                <td>411</td>
+                <td>0</td>
+                <td>102</td>
+                <td>315</td>
+            </tr>
+            <tr>
+                <td>GM12878 renatured in_vitro</td>
+                <td>3,265,933</td>
+                <td>33,801 </td>
+                <td>17,867</td>
+                <td>10</td>
+                <td>5,063</td>
+                <td>10,861</td>
+            </tr>
+            <tr>
+                <td>GM12891 renatured in_vitro</td>
+                <td>2,526,825</td>
+                <td>29,541 </td>
+                <td>15,798</td>
+                <td>11</td>
+                <td>4,391</td>
+                <td>9,341</td>
+            </tr>
+            <tr>
+                <td>GM12892 renatured in_vitro</td>
+                <td>2,921,326</td>
+                <td>31,488 </td>
+                <td>16,794</td>
+                <td>10</td>
+                <td>4,707</td>
+                <td>9,977</td>
+            </tr>
+            <tr>
+                <td rowspan="5" style="vertical-align: middle;"><a href="http://www.doi.org/10.1016/j.molcel.2012.08.008" target="_black">PARTE (Mol Cell, 2012)</a></td>
+                <td rowspan="5">Reproduction</td>
+                <td rowspan="5">V1</td>
+                <td rowspan="5">Yeast</td>
+                <td>S288C 23℃ in_vitro</td>
+                <td>1,029,095 </td>
+                <td>2,474 </td>
+                <td>2,393 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>81 </td>
+            </tr>
+            <tr>
+                <td>S288C 30℃ in_vitro</td>
+                <td>953,300 </td>
+                <td>2,285 </td>
+                <td>2,205 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>80 </td>
+            </tr>
+            <tr>
+                <td>S288C 37℃ in_vitro</td>
+                <td>983,672 </td>
+                <td>2,358 </td>
+                <td>2,280 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>78 </td>
+            </tr>
+            <tr>
+                <td>S288C 55℃ in_vitro</td>
+                <td>1,084,136 </td>
+                <td>2,616 </td>
+                <td>2,549 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>67 </td>
+            </tr>
+            <tr>
+                <td>S288C 75℃ in_vitro</td>
+                <td>765,720 </td>
+                <td>2,271 </td>
+                <td>2,196 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>75 </td>
+            </tr>
+            <tr>
+                <td rowspan="9" style="vertical-align: middle;"><a href="http://www.doi.org/10.1038/nature12894" target="_blank">DMS-seq (Nature, 2014)</a></td>
+                <td rowspan="9">Reproduction</td>
+                <td rowspan="9">DMS</td>
+                <td rowspan="6">Human</td>
+                <td>K562 in_vivo</td>
+                <td>7,095,073 </td>
+                <td>61,615 </td>
+                <td>31,518 </td>
+                <td>890 </td>
+                <td>9,798 </td>
+                <td>19,409 </td>
+            <tr>
+                <td>K652 in_vitro</td>
+                <td>2,722,195 </td>
+                <td>43,276 </td>
+                <td>17,819 </td>
+                <td>437 </td>
+                <td>5,231 </td>
+                <td>19,789 </td>
+            </tr>
+            <tr>
+                <td>K562 denatured</td>
+                <td>4,391,436 </td>
+                <td>46,884 </td>
+                <td>24,266 </td>
+                <td>634 </td>
+                <td>7,326 </td>
+                <td>14,658 </td>
+            </tr>
+            <tr>
+                <td>FBL in_vivo</td>
+                <td>1,336,825 </td>
+                <td>16,953 </td>
+                <td>9,531 </td>
+                <td>208 </td>
+                <td>2,436 </td>
+                <td>4,778 </td>
+            </tr>
+            <tr>
+                <td>FBL in_vitro</td>
+                <td>2,872,416 </td>
+                <td>30,845 </td>
+                <td>16,869 </td>
+                <td>327 </td>
+                <td>4,515 </td>
+                <td>9,134 </td>
+            </tr>
+            <tr>
+                <td>FBL denatured</td>
+                <td>1,435,069 </td>
+                <td>16,820 </td>
+                <td>9,429 </td>
+                <td>227 </td>
+                <td>2,446 </td>
+                <td>4,718 </td>
+            </tr>
+            <tr>
+                <td rowspan="3">Yeast</td>
+                <td>BY4741 in_vivo</td>
+                <td>2,120,926 </td>
+                <td>4,275 </td>
+                <td>4,212 </td>
+                <td>1 </td>
+                <td>0 </td>
+                <td>62 </td>
+            </tr>
+            <tr>
+                <td>BY4741 in_vitro</td>
+                <td>1,501,023 </td>
+                <td>3,186 </td>
+                <td>3,123 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>63 </td>
+            </tr>
+            <tr>
+                <td>BY4741 denatuerd</td>
+                <td>1,472,051 </td>
+                <td>3,254 </td>
+                <td>3,191 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>63 </td>
+            </tr>
+            <tr>
+                <td rowspan="34" style="vertical-align: middle;"><a href="http://www.doi.org/10.1126/science.aaf5371" target="_blank">DMS-seq & SHAPE (Science, 2016)</a></td>
+                <td rowspan="34">Reproduction</td>
+                <td rowspan="4">None</td>
+                <td rowspan="4">Human</td>
+                <td>HEK293T K+ no-reagent</td>
+                <td>509,106 </td>
+                <td>7,042 </td>
+                <td>3,833 </td>
+                <td>87 </td>
+                <td>1,023 </td>
+                <td>2,099 </td>
+            </tr>
+            <tr>
+                <td>HEK293T Na+ no-reagent</td>
+                <td>384,681 </td>
+                <td>5,475 </td>
+                <td>3,013 </td>
+                <td>67 </td>
+                <td>785 </td>
+                <td>1,610 </td>
+            </tr>
+            <tr>
+                <td>HeLa K+ no-reagent</td>
+                <td>455,380 </td>
+                <td>6,275 </td>
+                <td>3,592 </td>
+                <td>71 </td>
+                <td>864 </td>
+                <td>1,748 </td>
+            </tr>
+            <tr>
+                <td>HeLa Na+ no-reagent</td>
+                <td>713,806 </td>
+                <td>9,268 </td>
+                <td>5,173 </td>
+                <td>103 </td>
+                <td>1,333 </td>
+                <td>2,659 </td>
+            </tr>
+            <tr>
+                <td rowspan="5" style="vertical-align: middle;">DMS</td>
+                <td rowspan="11">Mouse</td>
+                <td>mES DMS in_vitro 95℃</td>
+                <td>234,705 </td>
+                <td>1,966 </td>
+                <td>1,066 </td>
+                <td>78 </td>
+                <td>253 </td>
+                <td>569 </td>
+            </tr>
+            <tr>
+                <td>mES DMS in_vitro 0mM K+</td>
+                <td>1,454,858 </td>
+                <td>8,606 </td>
+                <td>4,824 </td>
+                <td>274 </td>
+                <td>1,035 </td>
+                <td>2,473 </td>
+            </tr>
+            <tr>
+                <td>mES DMS in_vitro 150mM K+</td>
+                <td>384,510 </td>
+                <td>2,688 </td>
+                <td>1,484 </td>
+                <td>114 </td>
+                <td>356 </td>
+                <td>734 </td>
+            </tr>
+            <tr>
+                <td>mES DMS in_vivo PDS</td>
+                <td>1,426,567 </td>
+                <td>8,609 </td>
+                <td>4,727 </td>
+                <td>302 </td>
+                <td>1,071 </td>
+                <td>2,509 </td>
+            </tr>
+            <tr>
+                <td>mES DMS in_vivo</td>
+                <td>1,596,053 </td>
+                <td>9,449 </td>
+                <td>5,212 </td>
+                <td>323 </td>
+                <td>1,170 </td>
+                <td>2,744 </td>
+            </tr>
+            <tr>
+                <td rowspan="3">NAI</td>
+                <td>mES NAI in_vitro 0mM K+</td>
+                <td>2,681,830 </td>
+                <td>14,180 </td>
+                <td>7,503 </td>
+                <td>344 </td>
+                <td>1,998 </td>
+                <td>4,335 </td>
+            </tr>
+            <tr>
+                <td>mES NAI in_vitro 150mM K+</td>
+                <td>3,076,217 </td>
+                <td>15,771 </td>
+                <td>8,343 </td>
+                <td>340 </td>
+                <td>2,248 </td>
+                <td>4,840 </td>
+            </tr>
+            <tr>
+                <td>mES NAI in_vivo</td>
+                <td>5,171,130 </td>
+                <td>22,796 </td>
+                <td>11,991 </td>
+                <td>536 </td>
+                <td>3,266 </td>
+                <td>7,003 </td>
+            </tr>
+            <tr>
+                <td rowspan="3">None</td>
+                <td>mES K+ no-reagent</td>
+                <td>309,922 </td>
+                <td>2,299 </td>
+                <td>1,246 </td>
+                <td>92 </td>
+                <td>297 </td>
+                <td>664 </td>
+            </tr>
+            <tr>
+                <td>mES Na+ no-reagent</td>
+                <td>86,082 </td>
+                <td>752 </td>
+                <td>390 </td>
+                <td>40 </td>
+                <td>114 </td>
+                <td>208 </td>
+            </tr>
+            <tr>
+                <td>mES Li+ no-reagent</td>
+                <td>135,738 </td>
+                <td>1,177 </td>
+                <td>634 </td>
+                <td>53 </td>
+                <td>154 </td>
+                <td>336 </td>
+            </tr>
+            <tr>
+                <td rowspan="3">DMS</td>
+                <td rowspan="5">Yeast</td>
+                <td>yRH101 DMS in_vitro 0mMK+</td>
+                <td>2,611,745 </td>
+                <td>4,633 </td>
+                <td>4,607 </td>
+                <td>1 </td>
+                <td>0 </td>
+                <td>25 </td>
+            </tr>
+            <tr>
+                <td>yRH101 DMS in_vitro 150mMK+</td>
+                <td>2,202,509 </td>
+                <td>4,057 </td>
+                <td>4,033 </td>
+                <td>1 </td>
+                <td>0 </td>
+                <td>23 </td>
+            </tr>
+            <tr>
+                <td>yRH101 DMS in_vivo</td>
+                <td>2,326,412 </td>
+                <td>4,453 </td>
+                <td>4,427 </td>
+                <td>1 </td>
+                <td>0 </td>
+                <td>25 </td>
+            </tr>
+            <tr>
+                <td rowspan="2">None</td>
+                <td>yRH101 K+ no-reagent</td>
+                <td>1,333,943 </td>
+                <td>2,641 </td>
+                <td>2,624 </td>
+                <td>1 </td>
+                <td>0 </td>
+                <td>16 </td>
+            <tr>
+                <td>yRH101 Na+ no-reagent</td>
+                <td>1,645,607 </td>
+                <td>3,123 </td>
+                <td>3,104 </td>
+                <td>1 </td>
+                <td>0 </td>
+                <td>18 </td>
+            </tr>
+            <tr>
+                <td rowspan="3">DMS</td>
+                <td rowspan="5">E.coli</td>
+                <td>TOP10 DMS in_vitro 0mMK+</td>
+                <td>71,848 </td>
+                <td>245 </td>
+                <td>124 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>121 </td>
+            </tr>
+            <tr>
+                <td>TOP10 DMS in_vitro 150mMK+</td>
+                <td>57,462 </td>
+                <td>206 </td>
+                <td>88 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>118 </td>
+            </tr>
+            <tr>
+                <td>TOP10 DMS in_vivo</td>
+                <td>42,686 </td>
+                <td>134 </td>
+                <td>43 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>91 </td>
+            </tr>
+            <tr>
+                <td rowspan="2">None</td>
+                <td>TOP10 K+ no-reagent</td>
+                <td>42,095 </td>
+                <td>140 </td>
+                <td>33 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>107 </td>
+            </tr>
+            <tr>
+                <td>TOP10 Na+ no-reagent</td>
+                <td>39,846 </td>
+                <td>130 </td>
+                <td>24 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>106 </td>
+            </tr>
+            <tr>
+                <td rowspan="3">DMS</td>
+                <td rowspan="5">P.putida</td>
+                <td>KT2440 DMS in_vitro 0mMK+</td>
+                <td>354,429 </td>
+                <td>997 </td>
+                <td>913 </td>
+                <td>11 </td>
+                <td>0 </td>
+                <td>73 </td>
+            </tr>
+            <tr>
+                <td>KT2440 DMS in_vitro 150mMK+</td>
+                <td>286,808 </td>
+                <td>823 </td>
+                <td>738 </td>
+                <td>8 </td>
+                <td>0 </td>
+                <td>77 </td>
+            </tr>
+            <tr>
+                <td>KT2440 DMS in_vivo</td>
+                <td>317,943 </td>
+                <td>892 </td>
+                <td>810 </td>
+                <td>4 </td>
+                <td>0 </td>
+                <td>78 </td>
+            </tr>
+            <tr>
+                <td rowspan="2">None</td>
+                <td>KT2440 K+ no-reagent</td>
+                <td>27,906 </td>
+                <td>86 </td>
+                <td>21 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>65 </td>
+            </tr>
+            <tr>
+                <td>KT2440 Na+ no-reagent</td>
+                <td>26,050 </td>
+                <td>76 </td>
+                <td>16 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>60 </td>
+            </tr>
+            <tr>
+                <td rowspan="2">DMS</td>
+                <td rowspan="4">Synechococcus</td>
+                <td>WH8102 DMS in_vitro 0mMK+</td>
+                <td>9,752 </td>
+                <td>43 </td>
+                <td>10 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>33 </td>
+            </tr>
+            <tr>
+                <td>WH8102 DMS in_vitro 150mMK+</td>
+                <td>10,176 </td>
+                <td>44 </td>
+                <td>10 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>34 </td>
+            </tr>
+            <tr>
+                <td rowspan="2">None</td>
+                <td>WH8102 K+ no-reagent</td>
+                <td>5,455 </td>
+                <td>30 </td>
+                <td>2 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>28 </td>
+            </tr>
+            <tr>
+                <td>WH8102 Na+ no-reagent</td>
+                <td>5,239 </td>
+                <td>31 </td>
+                <td>2 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>29 </td>
+            </tr>
+            <tr>
+                <td rowspan="7" style="vertical-align: middle;"><a href="http://www.doi.org/10.1038/s41594-018-0091-z" target="_blank">DMS-seq (NSMB, 2018)</a></td>
+                <td rowspan="7">Download</td>
+                <td rowspan="7">DMS</td>
+                <td rowspan="7">Zebrafish</td>
+                <td>GRCZ11 DMS in_vivo 64c </td>
+                <td>5,027,519 </td>
+                <td>10,078 </td>
+                <td>8,055 </td>
+                <td>3 </td>
+                <td>671 </td>
+                <td>1,349 </td>
+            </tr>
+            <tr>
+                <td>GRCZ11 DMS in_vivo sphere</td>
+                <td>3,621,907 </td>
+                <td>7,462 </td>
+                <td>5,847 </td>
+                <td>1 </td>
+                <td>549 </td>
+                <td>1,065 </td>
+            </tr>
+            <tr>
+                <td>GRCZ11 DMS in_vivo shield</td>
+                <td>3,538,202 </td>
+                <td>7,143 </td>
+                <td>5,581 </td>
+                <td>1 </td>
+                <td>515 </td>
+                <td>1,046 </td>
+            </tr>
+            <tr>
+                <td>GRCZ11 DMS in_vitro</td>
+                <td>5,209,188 </td>
+                <td>10,755 </td>
+                <td>8,625 </td>
+                <td>4 </td>
+                <td>699 </td>
+                <td>1,427 </td>
+            </tr>
+            <tr>
+                <td>GRCZ11 DMS in_vivo 64c for translation inhibition</td>
+                <td>3,551,200 </td>
+                <td>7,630 </td>
+                <td>5,997 </td>
+                <td>3 </td>
+                <td>552 </td>
+                <td>1,078 </td>
+            </tr>
+            <tr>
+                <td>GRCZ11 DMS in_vivo 64c PatA treated for translation inhibition</td>
+                <td>4,398,966 </td>
+                <td>9,210 </td>
+                <td>7,325 </td>
+                <td>3 </td>
+                <td>644 </td>
+                <td>1,238 </td>
+            </tr>
+            <tr>
+                <td>GRCZ11 DMS in_vivo 64c CHX treated for translation inhibition</td>
+                <td>3,253,266 </td>
+                <td>7,022 </td>
+                <td>5,502 </td>
+                <td>3 </td>
+                <td>519 </td>
+                <td>998 </td>
+            </tr>
+            <tr>
+                <td rowspan="7" style="vertical-align: middle;"><a href="http://www.doi.org/10.7554/eLife.22037" target="_blank">DMS-seq (eLife, 2017)</a></td>
+                <td rowspan="7">Download</td>
+                <td rowspan="7">DMS</td>
+                <td rowspan="7">E.coli</td>
+                <td>MG1655 37℃ in_vitro WT </td>
+                <td>90,566 </td>
+                <td>2,274 </td>
+                <td>2,215 </td>
+                <td>22 </td>
+                <td>0 </td>
+                <td>37 </td>
+            </tr>
+            <tr>
+                <td>MG1655 95℃ in_vitro WT</td>
+                <td>247,648 </td>
+                <td>621 </td>
+                <td>586 </td>
+                <td>2 </td>
+                <td>0 </td>
+                <td>33 </td>
+            </tr>
+            <tr>
+                <td>MG1655 37℃ in_vivo WT</td>
+                <td>1,058,069 </td>
+                <td>2,615 </td>
+                <td>2,542 </td>
+                <td>35 </td>
+                <td>0 </td>
+                <td>38 </td>
+            </tr>
+            <tr>
+                <td>MG1655 37℃ in_vivo dusB-M3</td>
+                <td>698,581 </td>
+                <td>1,770 </td>
+                <td>1,741 </td>
+                <td>8 </td>
+                <td>0 </td>
+                <td>21 </td>
+            </tr>
+            <tr>
+                <td>MG1655 37℃ in_vivo dusB-M3:2</td>
+                <td>561,410 </td>
+                <td>1,407 </td>
+                <td>1,384 </td>
+                <td>4 </td>
+                <td>0 </td>
+                <td>19 </td>
+            </tr>
+            <tr>
+                <td>MG1655 37℃ in_vivo ∆gcvB</td>
+                <td>679,085 </td>
+                <td>1,710 </td>
+                <td>1,684 </td>
+                <td>6 </td>
+                <td>0 </td>
+                <td>20 </td>
+            </tr>
+            <tr>
+                <td>MG1655 37℃ in_vivo ∆gcvB+ksg</td>
+                <td>754,811 </td>
+                <td>2,036 </td>
+                <td>1,980 </td>
+                <td>31 </td>
+                <td>0 </td>
+                <td>25 </td>
+            </tr>
+            <tr>
+                <td><a href="http://www.doi.org/10.1038/nature12756" target="_blank">Structure-seq (Nature, 2014)</a></td>
+                <td>Reproduction</td>
+                <td>DMS</td>
+                <td>Arabidopsis thaliana </td>
+                <td>seeding in_vivo</td>
+                <td>717,266 </td>
+                <td>4,885 </td>
+                <td>4,844 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>41 </td>
+            </tr>
+            <tr>
+                <td rowspan="4" style="vertical-align: middle;"><a href="http://www.doi.org/10.1093/nar/gkx533" target="_blank">Structure-seq2 (NAR, 2017)</a></td>
+                <td rowspan="4">Reproduction</td>
+                <td rowspan="4">DMS</td>
+                <td rowspan="4">Rice</td>
+                <td>shoot_tissue in_vivo BiotinVAR custom_primer</td>
+                <td>27,858 </td>
+                <td>226 </td>
+                <td>191 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>35 </td>
+            </tr>
+            <tr>
+                <td>shoot_tissue in_vivo BiotinVAR standard_primer</td>
+                <td>19,378 </td>
+                <td>145 </td>
+                <td>113 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>32 </td>
+            </tr>
+            <tr>
+                <td>shoot_tissue custom_primer</td>
+                <td>78,386 </td>
+                <td>611 </td>
+                <td>561 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>50 </td>
+            </tr>
+            <tr>
+                <td>shoot_tissue standard_primer</td>
+                <td>42,321 </td>
+                <td>323 </td>
+                <td>283 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>40 </td>
+            </tr>
+            <tr>
+                <td><a href="http://www.doi.org/10.1186/s13059-014-0491-2" target="_blank">CIRS-seq (GenomeBiology, 2014)</a></td>
+                <td>Download</td>
+                <td>DMS & CMCT</td>
+                <td>Mouse</td>
+                <td>mES in_vivo</td>
+                <td>6,587,101 </td>
+                <td>31,743 </td>
+                <td>15,152 </td>
+                <td>2,459 </td>
+                <td>4,363 </td>
+                <td>9,769 </td>
+            </tr>
+            <tr>
+                <td rowspan="2" style="vertical-align: middle;"><a href="http://www.doi.org/10.1261/rna.042218.113" target="_blank">Mod-seq (RNA, 2014)</a></td>
+                <td rowspan="2">Download</td>
+                <td rowspan="2">DMS</td>
+                <td rowspan="2">Yeast</td>
+                <td>rpl26Δ in_vivo</td>
+                <td>1,222 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>0 </td>
+            </tr>
+            <tr>
+                <td>BY4741 in_vivo</td>
+                <td>1,258 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>0 </td>
+            </tr>
+            <tr>
+                <td><a href="http://www.doi.org/10.1016/j.cell.2017.04.036">DIM-2P-seq (Cell, 2017)</a></td>
+                <td>Download</td>
+                <td>DMS</td>
+                <td>Human</td>
+                <td>HEK293T in_vivo</td>
+                <td>1,777,482 </td>
+                <td>5,757 </td>
+                <td>2,966 </td>
+                <td>404 </td>
+                <td>1,017 </td>
+                <td>1,370 </td>
+            </tr>
+            <tr>
+                <td rowspan="7" style="vertical-align: middle;"><a href="http://www.doi.org/10.1038/nmeth.4057" target="_blank">DMS-MaPseq (Nature Methods, 2017)</a></td>
+                <td rowspan="7">Download</td>
+                <td>DMS</td>
+                <td>Human</td>
+                <td>HEK293T in_vivo</td>
+                <td>2,398,505 </td>
+                <td>20,455 </td>
+                <td>11,247 </td>
+                <td>6 </td>
+                <td>3,113 </td>
+                <td>6,089 </td>
+            </tr>
+            <tr>
+                <td rowspan="4">DMS</td>
+                <td rowspan="6">Yeast</td>
+                <td>BY4741 DMS in_vivo TGIRT </td>
+                <td>5,407,062 </td>
+                <td>5,765 </td>
+                <td>5,423 </td>
+                <td>2 </td>
+                <td>0 </td>
+                <td>340 </td>
+            </tr>
+            <tr>
+                <td>BY4741 DMS in_vivo SSii/Mn+ </td>
+                <td>3,507,962 </td>
+                <td>5,313 </td>
+                <td>4,954 </td>
+                <td>1 </td>
+                <td>0 </td>
+                <td>358 </td>
+            </tr>
+            <tr>
+                <td>BY4741 2.5% DMS in_vivo</td>
+                <td>1,169,814 </td>
+                <td>2,484 </td>
+                <td>2,435 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>49 </td>
+            </tr>
+            <tr>
+                <td>BY4741 5% DMS in_vivo</td>
+                <td>1,519,676 </td>
+                <td>3,129 </td>
+                <td>3,077 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>52 </td>
+            </tr>
+            <tr>
+                <td rowspan="2">None</td>
+                <td>BY4741 TGIRT  no-reagent</td>
+                <td>1,491,993 </td>
+                <td>3,063 </td>
+                <td>2,780 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>283 </td>
+            </tr>
+            <tr>
+                <td>BY4741 SSii/Mn+  no-reagent</td>
+                <td>2,316,911 </td>
+                <td>4,489 </td>
+                <td>4,135 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>354 </td>
+            </tr>
+            <tr>
+                <td rowspan="2" style="vertical-align: middle;"><a href="http://www.doi.org/10.1038/s41586-018-0258-0" target="_blank">DMS-MaPseq (Nature, 2018)</a></td>
+                <td rowspan="2">Download</td>
+                <td rowspan="2">DMS</td>
+                <td rowspan="2">Yeast</td>
+                <td>BY4741 Ded1p_Mutate in_vivo</td>
+                <td>3,035,616 </td>
+                <td>4,798 </td>
+                <td>4,785 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>13 </td>
+            </tr>
+            <tr>
+                <td>BY4741 WT in_vivo</td>
+                <td>3,620,439 </td>
+                <td>4,905 </td>
+                <td>4,890 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>15 </td>
+            </tr>
+            <tr>
+                <td rowspan="2" style="vertical-align: middle;"><a href="http://www.doi.org/10.1093/nar/gkz318" target="_blank">RAPiD-MaPseq (NAR, 2019)</a></td>
+                <td rowspan="2">Download</td>
+                <td rowspan="2">DMS</td>
+                <td rowspan="2">IAV</td>
+                <td>A/Puerto Rico/8/1934(H1N1) in_vivo</td>
+                <td>6,989 </td>
+                <td>8 </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+            </tr>
+            <tr>
+                <td>A/Puerto Rico/8/1934(H1N1) in_vitro</td>
+                <td>6,991 </td>
+                <td>8 </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+            </tr>
+            <tr>
+                <td rowspan="2" style="vertical-align: middle;"><a href="http://www.doi.org/10.1021/acs.biochem.5b00977" target="_blank">SHAPE-MaP (Biochemistry, 2015)</a></td>
+                <td rowspan="2">Download</td>
+                <td rowspan="2">1M7</td>
+                <td rowspan="2">Mouse</td>
+                <td>trophoblast stem cells incell</td>
+                <td>30,944 </td>
+                <td>42 </td>
+                <td>16 </td>
+                <td>0 </td>
+                <td>9 </td>
+                <td>17 </td>
+            </tr>
+            <tr>
+                <td>trophoblast stem cells exvivo</td>
+                <td>534 </td>
+                <td>2 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>1 </td>
+                <td>1 </td>
+            </tr>
+            <tr>
+                <td rowspan="3" style="vertical-align: middle;"><a href="http://www.doi.org/10.1016/j.cell.2018.02.034" target="_blank">SHAPE-MaP (Cell, 2018)</a></td>
+                <td rowspan="3">Download</td>
+                <td rowspan="3">1M7</td>
+                <td rowspan="3">E.coli</td>
+                <td>MG1655 cell_free</td>
+                <td>368,290 </td>
+                <td>442 </td>
+                <td>414 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>28 </td>
+            </tr>
+            <tr>
+                <td>MG1655 in_cell</td>
+                <td>384,796 </td>
+                <td>446 </td>
+                <td>418 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>28 </td>
+                </tr>
+                <tr>
+                <td>MG1655 Kasugamycin in_cell</td>
+                <td>244,826 </td>
+                <td>362 </td>
+                <td>336 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>26 </td>
+            </tr>
+            <tr>
+                <td><a href="http://www.doi.org/10.1073/pnas.1416266112" target="_blank">SHAPE-MaP (PNAS, 2015)</a></td>
+                <td>Download</td>
+                <td>1M7</td>
+                <td>HCV </td>
+                <td>HCV in_vitro</td>
+                <td>28,426 </td>
+                <td>3 </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+            </tr>
+            <tr>
+                <td><a href="http://www.doi.org/10.1038/nature08237" target="_blank">SHAPE-MaP (Nature, 2009)</a></td>
+                <td>Download</td>
+                <td>1M7</td>
+                <td>HIV</td>
+                <td>HIV-1 in_vivo</td>
+                <td>9,120 </td>
+                <td>1 </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+            </tr>
+            <tr>
+                <td rowspan="3" style="vertical-align: middle;"><a href="http://www.doi.org/10.1038/nmeth.3029" target="_blank">SHAPE-MaP (Nature Methods, 2014)</a></td>
+                <td rowspan="3">Download</td>
+                <td>1M6</td>
+                <td rowspan="3">HIV</td>
+                <td>HIV-1 1M6 in_vivo</td>
+                <td>9,159 </td>
+                <td>1 </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+            </tr>
+            <tr>
+                <td>1M7</td>
+                <td>HIV-1 1M7 in_vivo</td>
+                <td>9,150 </td>
+                <td>1 </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+            </tr>
+            <tr>
+                <td>NMIA</td>
+                <td>HIV-1 NMIA in_vivo</td>
+                <td>9,157 </td>
+                <td>1 </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+            </tr>
+            <tr>
+                <td><a href="http://www.doi.org/10.1371/journal.pcbi.1004230" target="_blank">SHAPE-MaP (PLOS CompBio, 2015)</a></td>
+                <td>Download</td>
+                <td>1M7</td>
+                <td>HIV</td>
+                <td>HIV in_vivo</td>
+                <td>27,837 </td>
+                <td>3 </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+            </tr>
+            <tr>
+                <td><a href="http://www.doi.org/10.1101/2020.06.15.151647" target="_blank">SHAPE-MaP (bioRxiv, 2020)</a></td>
+                <td>Download</td>
+                <td>NAI</td>
+                <td>SARS-CoV-2</td>
+                <td>VeroE6 in_vitro</td>
+                <td>28,827 </td>
+                <td>1 </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+            </tr>
+            <tr>
+                <td><a href="http://www.doi.org/10.1101/2020.07.10.197079" target="_blank">SHAPE-MaP (bioRxiv, 2020)</a></td>
+                <td>Download</td>
+                <td>NAI</td>
+                <td>SARS-CoV-2</td>
+                <td>VeroE6 in_vivo</td>
+                <td>29,841 </td>
+                <td>1 </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+            </tr>
+            <tr>
+                <td rowspan="6"><a href="http://www.doi.org/10.1073/pnas.1716689115" target="_blank">SHAPE-MaP (PNAS, 2018)</a></td>
+                <td rowspan="6">Download</td>
+                <td rowspan="2">1M6</td>
+                <td rowspan="6">Dengue</td>
+                <td>strain S16803 exviron_1M6</td>
+                <td>10,628 </td>
+                <td>1 </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+            </tr>
+            <tr>
+                <td>strain S16803 inviron_1M6</td>
+                <td>10,443 </td>
+                <td>1 </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+            </tr>
+            <tr>
+                <td rowspan="2">1M7</td>
+                <td>strain S16803 exviron_1M7</td>
+                <td>10,628 </td>
+                <td>1 </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+            </tr>
+            <tr>
+                <td>strain S16803 inviron_1M7</td>
+                <td>10,583 </td>
+                <td>1 </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+            </tr>
+            <tr>
+                <td rowspan="2">NMIA</td>
+                <td>strain S16803 exviron_NMIA</td>
+                <td>10,633 </td>
+                <td>1 </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+            </tr>
+            <tr>
+                <td>strain S16803 inviron_NMIA</td>
+                <td>10,637 </td>
+                <td>1 </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+            </tr>
+            <tr>
+                <td rowspan="2"><a href="http://www.doi.org/10.1038/s41467-019-09391-8" target="_blank">NAI-MaP (Nature Communication, 2019)</a></td>
+                <td rowspan="2">Download</td>
+                <td rowspan="2">NAI</td>
+                <td>Dengue</td>
+                <td>Dengue in_vivo</td>
+                <td>42,545 </td>
+                <td>4 </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+            </tr>
+            <tr>
+                <td>Zika</td>
+                <td>ZIKV in_vivo</td>
+                <td>42,932 </td>
+                <td>4 </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+            </tr>
+            <tr>
+                <td><a href="http://www.doi.org/10.1016/j.molcel.2016.01.024" target="_blank">SHAPE (Mol Cell, 2016)</a></td>
+                <td>Download</td>
+                <td>NAI</td>
+                <td>HCV </td>
+                <td>JFH1 in_vitro</td>
+                <td>8,815 </td>
+                <td>1 </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+            </tr>
+            <tr>
+                <td rowspan="2"><a href="http://www.doi.org/10.1021/bi4001535" target="_blank">SHAPE (BioChemistry, 2013)</a></td>
+                <td rowspan="2">Download</td>
+                <td rowspan="2">1M7</td>
+                <td rowspan="2">STMV</td>
+                <td>STMV in_vitro</td>
+                <td>946 </td>
+                <td>1 </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+            </tr>
+            <tr>
+                <td>STMV ex_vitro</td>
+                <td>1,011 </td>
+                <td>1 </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+            </tr>
+            <tr>
+                <td rowspan="2"><a href="http://www.doi.org/10.1093/nar/gkx1273" target="_blank">SHAPE-seq (NAR, 2018)</a></td>
+                <td rowspan="2">Download</td>
+                <td rowspan="2">1M7</td>
+                <td rowspan="2">CMV</td>
+                <td>Bn57-CMV lyRNA in_plant_cell_lysates</td>
+                <td>2,216 </td>
+                <td>1 </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+            </tr>
+            <tr>
+                <td>Bn57-CMV viRNA in_vitro</td>
+                <td>2,216 </td>
+                <td>1 </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+            </tr>
+            <tr>
+                <td rowspan="2"><a href="http://www.doi.org/10.1016/j.chom.2018.10.011" target="_blank">icSHAPE (Cell Host & Microbe, 2018)</a></td>
+                <td rowspan="2">Download</td>
+                <td rowspan="2">NAI-N<sub>3</sub></td>
+                <td rowspan="2">Zika</td>
+                <td>ZIKV in_vivo</td>
+                <td>21,530 </td>
+                <td>2 </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+            </tr>
+            <tr>
+                <td>ZIKV in_vitro</td>
+                <td>21,530 </td>
+                <td>2 </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+            </tr>
+            <tr>
+                <td rowspan="2"><a href="http://www.doi.org/10.1101/2020.07.07.192732" target="_blank">icSHAPE (bioRxiv, 2020)</a></td>
+                <td rowspan="2">Download</td>
+                <td rowspan="2">NAI-N<sub>3</sub></td>
+                <td rowspan="2">SARS-CoV-2</td>
+                <td>Huh7 in_vivo</td>
+                <td>29,965 </td>
+                <td>1 </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+            </tr>
+            <tr>
+                <td>Huh7 in_vitro</td>
+                <td>30,004 </td>
+                <td>1 </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+                <td>- </td>
+            </tr>
+            <tr>
+                <td rowspan="3"><a href="http://www.doi.org/10.1038/nature14263" target="_blank">icSHAPE (Nature, 2015)</a></td>
+                <td rowspan="3">Download</td>
+                <td rowspan="3">NAI-N<sub>3</sub></td>
+                <td rowspan="3">Mouse</td>
+                <td>mES METTL3_KO in_vivo</td>
+                <td>1,764,594 </td>
+                <td>6,936 </td>
+                <td>3,629 </td>
+                <td>431 </td>
+                <td>879 </td>
+                <td>1,997 </td>
+            </tr>
+            <tr>
+                <td>mES v65 in_vivo</td>
+                <td>14,106,282 </td>
+                <td>34,186 </td>
+                <td>18,018 </td>
+                <td>1,260 </td>
+                <td>4,765 </td>
+                <td>10,143 </td>
+            </tr>
+            <tr>
+                <td>mES v65 in_vitro</td>
+                <td>17,444,983 </td>
+                <td>31,098 </td>
+                <td>16,238 </td>
+                <td>1,098 </td>
+                <td>4,433 </td>
+                <td>9,329 </td>
+            </tr>
+            <tr>
+                <td rowspan="2"><a href="http://www.doi.org/10.1016/j.cell.2016.04.028" target="_blank">icSHAPE (Cell, 2016)</a></td>
+                <td rowspan="2">Download</td>
+                <td rowspan="2">NAI-N<sub>3</sub></td>
+                <td rowspan="2">Human</td>
+                <td>HEK293T in_vivo</td>
+                <td>2,030,707 </td>
+                <td>10,048 </td>
+                <td>5,561 </td>
+                <td>459 </td>
+                <td>1,418 </td>
+                <td>2,610 </td>
+            </tr>
+            <tr>
+                <td>HEK293T in_vitro</td>
+                <td>1,854,626 </td>
+                <td>9,887 </td>
+                <td>5,475 </td>
+                <td>451 </td>
+                <td>1,395 </td>
+                <td>2,566 </td>
+            </tr>
+            <tr>
+                <td rowspan="12"><a href="http://www.doi.org/10.1038/s41594-019-0200-7" target="_blank">icSHAPE (NSMB, 2019)</a></td>
+                <td rowspan="12">Download</td>
+                <td rowspan="12">NAI-N<sub>3</sub></td>
+                <td rowspan="6">Mouse</td>
+                <td>mES chromatin in_vivo</td>
+                <td>3,871,974 </td>
+                <td>7,403 </td>
+                <td>2,875 </td>
+                <td>387</td>
+                <td>965 </td>
+                <td>3,176 </td>
+            </tr>
+            <tr>
+                <td>mES chromatin in_vitro</td>
+                <td>2,969,374 </td>
+                <td>7,331 </td>
+                <td>2,859 </td>
+                <td>351 </td>
+                <td>961 </td>
+                <td>3,160 </td>
+            </tr>
+            <tr>
+                <td>mES cytoplasm in_vivo</td>
+                <td>8,292,181 </td>
+                <td>23,356 </td>
+                <td>12,427 </td>
+                <td>1,554 </td>
+                <td>2,921 </td>
+                <td>6,454 </td>
+            </tr>
+            <tr>
+                <td>mES cytoplasm in_vitro</td>
+                <td>6,340,837 </td>
+                <td>20,902 </td>
+                <td>10,893 </td>
+                <td>1,300 </td>
+                <td>2,695 </td>
+                <td>6,014 </td>
+            </tr>
+            <tr>
+                <td>mES nucleoplasm in_vivo</td>
+                <td>9,899,971 </td>
+                <td>23,373 </td>
+                <td>12,363 </td>
+                <td>1,217 </td>
+                <td>2,907 </td>
+                <td>6,886 </td>
+            </tr>
+            <tr>
+                <td>mES nucleoplasm in_vitro</td>
+                <td>10,473,036 </td>
+                <td>23,911 </td>
+                <td>12,473 </td>
+                <td>1,206 </td>
+                <td>3,011 </td>
+                <td>7,221 </td>
+            </tr>
+            <tr>
+                <td rowspan="6">Human</td>
+                <td>HEK293 chromatin in_vivo</td>
+                <td>2,296,220 </td>
+                <td>6,837 </td>
+                <td>2,587 </td>
+                <td>453</td>
+                <td>1140</td>
+                <td>2657</td>
+            </tr>
+            <tr>
+                <td>HEK293 chromatin in_vitro</td>
+                <td>3,701,135 </td>
+                <td>10,507 </td>
+                <td>3,525 </td>
+                <td>589 </td>
+                <td>2,102 </td>
+                <td>4,291 </td>
+            </tr>
+            <tr>
+                <td>HEK293 cytoplasm in_vivo</td>
+                <td>2,146,114 </td>
+                <td>12,516 </td>
+                <td>6,020 </td>
+                <td>843 </td>
+                <td>1,817 </td>
+                <td>3,836 </td>
+            </tr>
+            <tr>
+                <td>HEK293 cytoplasm in_vitro</td>
+                <td>6,895,344 </td>
+                <td>23,670 </td>
+                <td>12,580 </td>
+                <td>1,398 </td>
+                <td>3,258 </td>
+                <td>6,434 </td>
+            </tr>
+            <tr>
+                <td>HEK293 nucleoplasm in_vivo</td>
+                <td>3,714,351 </td>
+                <td>16,017 </td>
+                <td>8,044 </td>
+                <td>796 </td>
+                <td>2,289 </td>
+                <td>4,888 </td>
+            </tr>
+            <tr>
+                <td>HEK293 nucleoplasm in_vitro</td>
+                <td>8,169,250 </td>
+                <td>23,229 </td>
+                <td>12,238 </td>
+                <td>1,211 </td>
+                <td>3,294 </td>
+                <td>6,486 </td>
+            </tr>
+            <tr>
+                <td rowspan="8"><a href="http://www.doi.org/10.1186/s13059-020-02022-2" target="_blank">icSHAPE (GenomeBiology, 2020)</a></td>
+                <td rowspan="8">Download</td>
+                <td rowspan="8">NAI-N<sub>3</sub></td>
+                <td rowspan="8">Zebrafish</td>
+                <td>widetype AB strain fertilized_egg in_vivo</td>
+                <td>7,294,463 </td>
+                <td>11,078 </td>
+                <td>9,116 </td>
+                <td>2 </td>
+                <td>641 </td>
+                <td>1,319 </td>
+            </tr>
+            <tr>
+                <td>widetype AB strain 1-cell in_vivo</td>
+                <td>8,107,635 </td>
+                <td>11,636 </td>
+                <td>9,508 </td>
+                <td>2 </td>
+                <td>695 </td>
+                <td>1,431 </td>
+            </tr>
+            <tr>
+                <td>widetype AB strain 4-cell in_vivo</td>
+                <td>8,024,909 </td>
+                <td>12,623 </td>
+                <td>10,395 </td>
+                <td>2 </td>
+                <td>718 </td>
+                <td>1,508 </td>
+            </tr>
+            <tr>
+                <td>widetype AB strain 64-cell in_vivo</td>
+                <td>9,507,124 </td>
+                <td>14,602 </td>
+                <td>12,074 </td>
+                <td>2 </td>
+                <td>816 </td>
+                <td>1,710 </td>
+            </tr>
+            <tr>
+                <td>widetype AB strain shield in_vivo</td>
+                <td>7,501,747 </td>
+                <td>11,146 </td>
+                <td>9,087 </td>
+                <td>3 </td>
+                <td>664 </td>
+                <td>1,392 </td>
+            </tr>
+            <tr>
+                <td>widetype AB strain sphere in_vivo</td>
+                <td>12,022,502 </td>
+                <td>15,932 </td>
+                <td>13,141 </td>
+                <td>2 </td>
+                <td>911 </td>
+                <td>1,878 </td>
+            </tr>
+            <tr>
+                <td>widetype AB strain shield elavl1a-mo  in_vivo</td>
+                <td>5,675,258 </td>
+                <td>8,958 </td>
+                <td>7,216 </td>
+                <td>1 </td>
+                <td>564 </td>
+                <td>1,177 </td>
+            </tr>
+            <tr>
+                <td>widetype AB strain sphere elavl1a-mo  in_vivo</td>
+                <td>7,033,200 </td>
+                <td>11,834 </td>
+                <td>9,715 </td>
+                <td>1 </td>
+                <td>705 </td>
+                <td>1,413 </td>
+            </tr>
+            <tr>
+                <td rowspan="10"><a href="http://www.doi.org/10.1038/s41589-019-0459-3" target="_blank">Keth-seq (NCB, 2020)</a></td>
+                <td rowspan="10">Download</td>
+                <td rowspan="10">N<sub>3</sub>-kethoxal</td>
+                <td rowspan="6">Mouse</td>
+                <td>mES kethoxal vs kethoxal_removed in_vivo</td>
+                <td>83,466 </td>
+                <td>656 </td>
+                <td>293 </td>
+                <td>135 </td>
+                <td>49 </td>
+                <td>179 </td>
+            </tr>
+            <tr>
+                <td>mES kethoxal_treated_1min vs no_treat in_vivo</td>
+                <td>10,944 </td>
+                <td>128 </td>
+                <td>2 </td>
+                <td>0 </td>
+                <td>4 </td>
+                <td>122 </td>
+            </tr>
+            <tr>
+                <td>mES kethoxal_treated_5min vs no_treat in_vivo</td>
+                <td>6,947 </td>
+                <td>80 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>3 </td>
+                <td>77 </td>
+            </tr>
+            <tr>
+                <td>mES kethoxal vs no_treat in_vitro</td>
+                <td>189,658 </td>
+                <td>1,250 </td>
+                <td>475 </td>
+                <td>255</td>
+                <td>128</td>
+                <td>392</td>
+            </tr>
+            <tr>
+                <td>mES kethoxal vs no_treat in_vivo</td>
+                <td>116,232 </td>
+                <td>981 </td>
+                <td>427 </td>
+                <td>196 </td>
+                <td>87 </td>
+                <td>271 </td>
+            </tr>
+            <tr>
+                <td>mES kethoxal vs no_treat </td>
+                <td>60,593 </td>
+                <td>650 </td>
+                <td>274 </td>
+                <td>151 </td>
+                <td>50 </td>
+                <td>175 </td>
+            </tr>
+            <tr>
+                <td rowspan="4">Human</td>
+                <td>HeLa kethoxal vs no treat in_vivo</td>
+                <td>351,732 </td>
+                <td>4,032 </td>
+                <td>2,094 </td>
+                <td>393 </td>
+                <td>488 </td>
+                <td>1,057 </td>
+            </tr>
+            <tr>
+                <td>HeLa kethoxal vs no treat in_vitro</td>
+                <td>203,319 </td>
+                <td>1,888 </td>
+                <td>881 </td>
+                <td>48 </td>
+                <td>258 </td>
+                <td>701 </td>
+            </tr>
+            <tr>
+                <td>HeLa kethoxal vs no treat PDS in_vivo </td>
+                <td>336,513 </td>
+                <td>3,736 </td>
+                <td>1,950 </td>
+                <td>344 </td>
+                <td>457 </td>
+                <td>985 </td>
+            </tr>
+            <tr>
+                <td>HeLa kethoxal vs no treat PDS in_vitro </td>
+                <td>229,126 </td>
+                <td>2,476 </td>
+                <td>1,237 </td>
+                <td>60 </td>
+                <td>343 </td>
+                <td>836 </td>
+            </tr>
+            <tr>
+                <td rowspan="6"><a href="http://www.doi.org/10.1038/nmeth.1529" target="_blank">FragSeq (NatureMethods, 2010)</a></td>
+                <td rowspan="6">Download</td>
+                <td rowspan="2">PNK (polynucleotide kinase)</td>
+                <td rowspan="6">Mouse</td>
+                <td>KH2 Embryonic stem cells PNK-treated in_vitro</td>
+                <td>220,008 </td>
+                <td>38 </td>
+                <td>7 </td>
+                <td>4 </td>
+                <td>1 </td>
+                <td>26 </td>
+            </tr>
+            <tr>
+                <td>KH3 Neural precursor cells PNK-treated in_vitro</td>
+                <td>476,460 </td>
+                <td>187 </td>
+                <td>11 </td>
+                <td>2 </td>
+                <td>5 </td>
+                <td>169 </td>
+            </tr>
+            <tr>
+                <td rowspan="2">Nuclease P1</td>
+                <td>KH2 Embryonic stem cells NUCLEASE-treated in_vitro</td>
+                <td>537,628 </td>
+                <td>46 </td>
+                <td>10 </td>
+                <td>11 </td>
+                <td>5 </td>
+                <td>20 </td>
+            </tr>
+            <tr>
+                <td>KH3 Neural precursor cells NUCLEASE-treated in_vitro</td>
+                <td>271,276 </td>
+                <td>12 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>12 </td>
+            </tr>
+            <tr>
+                <td rowspan="2">None</td>
+                <td>KH2 Embryonic stem cells on-reagent in_vitro</td>
+                <td>86,778 </td>
+                <td>11 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>11 </td>
+            </tr>
+            <tr>
+                <td>KH3 Neural precursor cells on-reagent in_vitro</td>
+                <td>517,472 </td>
+                <td>21 </td>
+                <td>3 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>18 </td>
+            </tr>
+            <tr>
+                <td rowspan="2"><a href="http://www.doi.org/10.1093/nar/gkaa404" target="_blank">Lead-seq (NAR, 2020)</a></td>
+                <td rowspan="2">Download</td>
+                <td rowspan="2">Lead(II)</td>
+                <td rowspan="2">Y_pseudotuberculosis</td>
+                <td>Lead-seq_25degree</td>
+                <td>1,057,814 </td>
+                <td>1,794 </td>
+                <td>1,602 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>192 </td>
+            </tr>
+            <tr>
+                <td>Lead-seq_37degree</td>
+                <td>1,308,701 </td>
+                <td>1,794 </td>
+                <td>1,602 </td>
+                <td>0 </td>
+                <td>0 </td>
+                <td>192 </td>
+            </tr>
+        </tbody>
+        </table>
+    </div>
+</div>
+
+
+<!--
+<div class="text-center">
+    <h1 class="text-secondary"><i class="fas fa-snowman"></i> 还在建设中...</h1>
+</div>
+-->
+
+<script>
+    $('#statistics_sb').addClass('active');
+    
+    // 显示tooltip
+    $('[help-toggle="help-toggle"]').tooltip();
+
+    function update_source_table(){
+        var query_link = "/api/paper_species_classification/";
+        
+        var param = [];
+        var reagent = $('#adv_reagent').children("option:selected").val();
+        if(reagent!="0")
+            param.push("reagent="+ encodeURIComponent(reagent) );
+        
+        var principle = $('#adv_principle').children("option:selected").val();
+        if(principle!="0")
+            param.push("principle="+ encodeURIComponent(principle) );
+
+        if(param.length!=0)
+            query_link += "?"+param.join('&');
+
+        var request = $.ajax({
+            url: query_link,
+            method: "GET",
+            data: null,
+            dataType: "json"
+        });
+
+        request.done(function( data, status ) {
+            $('#statistic_table').empty();
+            var table = $('<table class="table table-bordered mb-0"></table>');
+            var species_type_list = ['Animals', 'Plants', 'Bacterial and Fugins', 'Virus']
+            for(var stype of species_type_list)
+            {
+                var species_list = Object.keys(data[stype]);
+                for(var i=0;i<species_list.length;i++)
+                {
+                    var species = species_list[i];
+                    var tr = $('<tr></tr>');
+                    if(i==0)
+                    {
+                        var td1 = $('<td style="vertical-align:middle;text-align:center"></td>');
+                        td1.attr('rowspan', species_list.length);
+                        td1.html(stype);
+                        tr.append(td1);
+                    }
+                    var td2 = $('<td></td>');
+                    td2.html(species);
+                    tr.append(td2);
+
+                    var td3 = $('<td></td>');
+                    for(var j=0; j<data[stype][species].length;j++)
+                    {
+                        var obj = data[stype][species][j];
+                        var a = $('<a class="d-inline-block" href="#" data-toggle="tooltip" data-placement="top" title="#" target="_blank"></a>');
+                        a.html( "("+String(obj.year)+","+obj.journal+","+obj.technology+")&nbsp;" );
+                        a.attr('href', 'http://doi.org/'+obj.doi);
+                        a.attr('title', obj.author);
+                        console.log(obj.dataProduction);
+                        if(obj.dataProduction.indexOf("Download")!=-1)
+                            a.css('color', '#17a2b8');
+                        else
+                            a.css('color', '#ff9800');
+                        td3.append(a);
+                    }
+                    tr.append(td3);
+                    table.append(tr);
+                }
+            }
+            $('#statistic_table').html(table);
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+
+        request.fail(function( jqXHR, textStatus ) {
+            alerter( "Error", "Load paper list failed" );
+        });
+    }
+
+    update_source_table();
+    $('#adv_reagent').on('change', function(){ update_source_table(); });
+    $('#adv_principle').on('change', function(){ update_source_table(); });
+
+</script>
+
+{% endblock main %}

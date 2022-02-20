@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<title>Topic</title>
+{% endblock head %}
+
+{% block main %}
+
+<div id="topicID" class="d-none">{{topicID}}</div>
+
+<script src="https://cdn.tiny.cloud/1/cg3cogj4yz2mou83x549652ai08dpu3dnzxs6fhca9t7t9xx/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+<!--<script src="{% static 'js/tinymce.min.js' %}"></script>-->
+<!--<script>tinymce.init({selector:'textarea'});</script>-->
+
+<!--
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+  Launch demo modal
+</button>
+-->
+
+<div class="modal fade" id="ImageDisplay" tabindex="-1" role="dialog" aria-labelledby="ImageDisplayTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ImageDisplayTitle">Image</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <img src="" class="img-fluid mw-100" alt="Uploaded Image" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid px-3 mb-3">
+	<div class="row">
+		<h3>{{title|safe}}</a></h3>
+	</div>
+	<div class="row px-3">
+		<small class="text-muted">{{nickName}}</small>
+		&nbsp;&nbsp;&nbsp;&nbsp;
+		<small class="text-muted">{{time}}</small>
+	</div>
+	<div class="comment-content">
+		{{content|safe}}
+	</div>
+	{% if image_list %}
+	<div class="row">
+		{% for img in image_list %}
+		<button class="btn btn-light" onclick='display_img("{{img}}", "图片 {{forloop.counter}}");'>图片 {{forloop.counter}}</button>
+		{% endfor %}
+	</div>
+	{% endif %}
+</div>
+
+<div class="container-fluid p-0 mb-3">
+	<button class="btn btn-secondary" onclick="$('#newComment').toggleClass('d-none');">新建评论</button>
+</div>
+
+<div class="container-fluid d-none px-0" id="newComment" style="margin-bottom:50px;">
+	<form action="update_topic/" method="post" enctype="multipart/form-data" id="newCommentForm">
+		<div class="row mb-2">
+			<div class="col-lg-12 px-3">
+				<textarea id="content"></textarea>
+			</div>
+		</div>
+		<div class="custom-file mb-2">
+    		<input type="file" class="custom-file-input" id="img_upload" data-show-upload="true" data-show-caption="true" accept="image/*">
+    		<label class="custom-file-label" for="img_upload">上传图片</label>
+  		</div>
+		<div id="img_report" class="mb-2">
+		</div>
+		<div class="row">
+			<div class="col-lg-2 offset-lg-10">
+				<input type="submit" class="btn btn-block btn-success" value="提交">
+			</div>
+		</div>
+	</form>
+</div>
+
+
+<div class="container-fluid">
+	{% for comment in comments %}
+	<div style="margin-bottom:30px;">
+		<div class="row">
+			<small class="text-muted">{{comment.nickName}}</small>
+			&nbsp;&nbsp;&nbsp;&nbsp;
+			<small class="text-muted">{{comment.time}}</small>
+		</div>
+		<div class="comment-content">
+			{{comment.content|safe}}
+		</div>
+		{% if comment.image_list %}
+		<div class="row">
+			{% for img in comment.image_list %}
+			<button class="btn btn-light" onclick='display_img("{{img}}", "图片 {{forloop.counter}}");'>图片 {{forloop.counter}}</button>
+			{% endfor %}
+		</div>
+		{% endif %}
+	</div>
+	{% endfor %}
+</div>
+
+<script type="text/javascript">
+	let filenames = {
+		'raw': [],
+		'new': []
+	};
+
+    tinymce.init({
+		selector: 'textarea[id=content]',
+		plugins: 'a11ychecker advcode casechange formatpainter linkchecker autolink lists checklist media mediaembed pageembed permanentpen powerpaste table advtable tinycomments tinymcespellchecker',
+		toolbar: 'a11ycheck addcomment showcomments casechange checklist code formatpainter pageembed permanentpen table',
+		toolbar_mode: 'floating',
+		tinycomments_mode: 'embedded',
+		tinycomments_author: 'Author name',
+		min_height: 500
+    });
+
+	function display_img(img_path, title){
+		$('#ImageDisplayTitle').html( title );
+		$('#ImageDisplay img')[0].setAttribute('src', "/static/upload_imgs/"+img_path);
+		$('#ImageDisplay').modal('show');
+	}
+
+    function get_cookie_byname(key){
+        var cookie_list = document.cookie.split("; ");
+        for(var i=0;i<cookie_list.length;i++)
+        {
+            var keyvalue = cookie_list[i].split('=');
+            if(keyvalue[0]==key)
+                return keyvalue[1];
+        }
+        return false;
+    }
+
+	$('#img_upload').change(function(){    
+	    //on change event  
+	    var formdata = new FormData();
+	    var file = "";
+	    if($(this).prop('files').length > 0)
+	    {
+	        file =$(this).prop('files')[0];
+	        formdata.append("file", file);
+	    }else{
+	    	return;
+	    }
+  
+	    var wait = null;
+
+	    jQuery.ajax({
+		    url: "/api/upload_file/",
+		    type: "POST",
+		    data: formdata,
+		    processData: false,
+		    contentType: false,
+		    beforeSend: function(request) {
+                request.setRequestHeader('X-CSRFToken', get_cookie_byname('csrftoken'));
+                wait = $('<div class="clearfix"></div>');
+                var b = $('<div class="spinner-border text-primary" role="status"></div>');
+                var c = $('<span class="sr-only">正在上传...</span>');
+                b.append(c);
+                wait.append(b);
+                $('#img_report').append(wait);
+            },
+		    success: function(data, status) {
+		    	if(data['error_code']!=0){
+		    		alerter("Error", data['error_text']);
+		    		//alert(data['error_text']);
+		    		return;
+		    	}
+		    	filenames['raw'].push(file.name);
+		    	filenames['new'].push(data['name']);
+		    	console.log(filenames);
+
+		    	//var a = $('#img_report').children();
+		    	//a[a.length-1].remove();
+		    	wait.remove();
+
+		    	var a = $('<div class="clearfix"></div>');
+		    	var b = $('<span>图片 '+String(filenames['raw'].length)+': '+file.name+'</span>');
+		    	var c = $('<button type="button" class="btn btn-light border-0 float-right" onclick="deleteImg(this);">&times;</button>');
+		    	a.append(b);
+		    	a.append(c);
+		    	$('#img_report').append(a);
+			}
+		});
+	});
+
+	function deleteImg(obj){
+		var ID = 1;
+		$('#img_report span').each(function(){
+			if(this.parentElement===obj.parentElement){
+				filenames['raw'].splice(ID-1,1);
+				filenames['new'].splice(ID-1,1);
+				obj.parentElement.remove();
+			}else{
+				$(this).html( "图片 "+String(ID)+$(this).html().split(':')[1] );
+				ID += 1;
+			}
+		});
+		console.log(filenames);
+		return false;
+	}
+
+	$('#newCommentForm').submit(function(e){
+		e.preventDefault();
+
+		//var url = '/api/new_comment/?content='+tinyMCE.get('content').getContent();
+		var code_data = { 'content':tinyMCE.get('content').getContent(), 'topicID':$('#topicID').html() }
+		if( filenames['new'].length>0 )
+			code_data['imagefiles'] = filenames['new'].join(";");
+
+		function success(data){
+			data = JSON.parse(data);
+			if(data['error_code']!=0){
+				alerter("Error", data['error_text']);
+				//alert(data['error_text']);
+			}else{
+				location.reload();
+			}
+		}
+		postAjax('/api/new_comment/', code_data, success);
+
+	});
+
+	function postAjax(url, data, success) {
+	    var params = typeof data == 'string' ? data : Object.keys(data).map(
+	            function(k){ return encodeURIComponent(k) + '=' + encodeURIComponent(data[k]) }
+	        ).join('&');
+
+	    var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+	    xhr.open('POST', url);
+	    xhr.setRequestHeader("X-CSRFToken", get_cookie_byname('csrftoken'));
+	    xhr.onreadystatechange = function() {
+	        if (xhr.readyState>3 && xhr.status==200) { success(xhr.responseText); }
+	    };
+	    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+	    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	    xhr.send(params);
+	    return xhr;
+	}
+
+</script>
+
+
+{% endblock main %}

@@ -1,0 +1,815 @@
+C{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<title>Browse</title>
+<link href="/static/tabulator/dist/css/tabulator.min.css" rel="stylesheet">
+<script type="text/javascript" src="/static/tabulator/dist/js/tabulator.min.js"></script>
+{% endblock head %}
+
+{% block help %}
+<div class="customizer d-none d-xl-block">
+    <a class="customizer-toggle bg-info text-light" href="javascript:void(0);" title="Document">
+        <i class="fas fa-book-reader mt-3"></i>
+    </a>
+    <div class="customizer-content p-2" style="overflow-y:scroll;">
+        <h3 class="text-uppercase mb-0 mt-2 text-info">Help</h3>
+        <hr>
+        <h5 class="text-info">How to display widescreen</h5>
+        <p>
+            You only need to click the [Menu] button to hide the left menubar, and then genome browser will expand to full width.
+            <div class="mx-5 my-2">
+                <button class="btn btn-block btn-light" onclick="load_gif(this,'click-menu.gif');">load GIF...</button>
+                <!--<img src="/static/img/click-menu.gif" alt="click-menu.gif" width="100%">-->
+            </div>
+            Another way is to click [full-screen view] in the upper right corner of JBrowse to view Jbrowse in a new window
+            <div class="mb-1 text-center">
+                <img src="/static/img/3.png" alt="3.png" class="img-fluid mw-100 img-thumbnail">
+            </div>
+        </p>
+        <h5 class="text-info">How to select tracks</h5>
+        <p>
+            There are two ways to select tracks with criterion.
+            <ul>
+                <li>
+                    Click the [Advanced] button to show the selection buttons; Select the criterion and click the [Filter] button; Then the browser will update.
+                    <div class="mx-0 my-2">
+                        <button class="btn btn-block btn-light" onclick="load_gif(this,'click-advanced.gif');">load GIF...</button>
+                        <!--<img src="/static/img/click-advanced.gif" alt="click-advanced.gif" width="100%">-->
+                    </div>
+                </li>
+                <li>
+                    Click the [Select tracks] button in the browser; Then select the criterion in the left panel; Select the datasets to show.
+                    <div class="mx-0 my-2">
+                        <button class="btn btn-block btn-light" onclick="load_gif(this,'click-selecttracks.gif');">load GIF...</button>
+                        <!--<img src="/static/img/click-selecttracks.gif" alt="click-selecttracks.gif" width="100%">-->
+                    </div>
+                </li>
+            </ul>
+        </p>
+        <h5 class="text-info">How to fix the track scale</h5>
+        <p>
+            The track is auto scaled by default. Users can fix the track scale. Click the inverted triangle next to the track label, select [Edit config], change the "autoscale" to "", set "min_score" and "max_score".
+            <div class="mb-1 text-center">
+                <img src="/static/img/1.png" alt="1.png" class="img-fluid mw-100 img-thumbnail">
+            </div>
+            <div class="mb-1 text-center">
+                <img src="/static/img/2.png" alt="2.png" class="img-fluid mw-100 img-thumbnail">
+            </div>
+        </p>
+        <h5 class="text-info">How to download data</h5>
+        <p>
+            To download the data, you can click the inverted triangle to the right of the track label, and then click [save track data]
+            <div class="mx-0 my-2">
+                <button class="btn btn-block btn-light" onclick="load_gif(this,'savedata.gif');">load GIF...</button>
+            </div>
+        </p>
+    </div>
+</div>
+{% endblock help %}
+
+{% block main %}
+
+
+<div class="container-fluid" style="">
+
+    <div class="row mb-lg-2">
+        <div class="col-lg-3">
+            <div class="dropdown btn-group w-100" id="species_select_dropdown">
+                <button class="form-control btn btn-lg d-inline-block dark-blue dropdown-toggle text-truncate w-100 mb-2 mb-lg-0" data-toggle="dropdown" id="btn" data-step="1" data-intro="Select a species" data-position='right'>Select Species</button>
+                <div class="dropdown-menu border-0 dropdown-menu-right" id="species_select_menu">
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                        <div class="mw-50 p-3 shadow rounded-lg">
+                            <div class="rounded w-100 mb-3 p-1 bg-red">
+                                <h3 class="font-weight-light">Animals</h3>
+                                <div class="btn-group btn-group-toggle">
+                                    {% for animal in animals %}
+                                    <label class="btn btn-outline-dark-blue loud-link-click" data-sound="button-click">
+                                        <input type="radio" name="species" value="{{animal.stdname}}">{{animal.humanname}}
+                                    </label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="rounded w-100 mb-3 p-1 bg-red">
+                                <h3 class="font-weight-light">Plants</h3>
+                                <div class="btn-group btn-group-toggle">
+                                    {% for plant in plants %}
+                                    <label class="btn btn-outline-dark-blue loud-link-click" data-sound="button-click">
+                                        <input type="radio" name="species" value="{{plant.stdname}}">{{plant.humanname}}
+                                    </label>
+                                    {% endfor %}
+                                </div> 
+                            </div>
+
+                            <div class="rounded w-100 mb-3 p-1 bg-red">
+                                <h3 class="font-weight-light">Bacteria and fungi</h3>
+                                <div class="btn-group btn-group-toggle">
+                                    {% for bacteria in bacteria_fungi %}
+                                    <label class="btn btn-outline-dark-blue loud-link-click" data-sound="button-click">
+                                        <input type="radio" name="species" value="{{bacteria.stdname}}">{{bacteria.humanname}}
+                                    </label>
+                                    {% endfor %}
+                                </div> 
+                            </div>
+
+                            <div class="rounded w-100 p-1 bg-red">
+                                <h3 class="font-weight-light">Virus</h3>
+                                <div class="btn-group btn-group-toggle">
+                                    {% for viru in virus %}
+                                    {% if forloop.counter|divisibleby:6 %}
+                                    </div>
+                                    <div class="btn-group btn-group-toggle">
+                                    {% endif %}
+                                    <label class="btn btn-outline-dark-blue loud-link-click" data-sound="button-click">
+                                        <input type="radio" name="species" value="{{viru.stdname}}">{{viru.humanname}}
+                                    </label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div> 
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="dropdown show">
+                <input type="text" class="form-control form-control-lg text-monospace dropdown-toggle" data-toggle="dropdown" placeholder="chr1:11111-22222 or GAPDH" id="search_input" aria-haspopup="false" aria-expanded="false" onfocus="update_dropdown()" oninput="update_dropdown()" autocomplete="off" data-step="2" data-intro="Search gene symbol or genome locus" data-position='bottom'>
+                <div class="dropdown-menu w-100" aria-labelledby="search_input" id="search_input_dd">
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <button class="btn btn-outline-dark-blue btn-block btn-lg" onclick="javascript:response_GO();">Go</button>
+        </div>
+    </div>
+
+    <div id="accordion" class="mb-3">
+      <div class="card">
+        <div class="card-header py-1 mb-0" id="headingOne">
+          <h5 class="mb-0 d-inline-block">
+            <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" data-step="3" data-intro="Display some prbbing data based on criteriors" data-position='bottom'>
+                <h4 class="mb-0 text-secondary" style="text-decoration:none;" onclick="javascript:toggle_collapse()"><i class="far fa-check-square"></i>&nbsp;Click here to select datasets <i class="fa fa-angle-double-down" aria-hidden="true" id="collapse_logo"></i></h4>
+            </button>
+          </h5>
+          <small class="ml-auto d-inline-block text-info" id="datasetCount"></small>
+        </div>
+        <div id="collapseOne" class="collapse hide" aria-labelledby="headingOne" data-parent="#accordion">
+          <div class="card-body">
+
+                <div class="row px-3 py-1">
+                    <div class="col-lg-3">
+                        <label>Tech Name</label>
+                        <span data-toggle="tooltip" data-placement="top" title="The name the technology" help-toggle="help-toggle"><i class="text-secondary fas fa-question-circle"></i></span>
+                        <select class="form-control form-control-lg" id="adv_techname">
+                            <option value="0">All</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Reagent:</label>
+                        <span data-toggle="tooltip" data-placement="top" title="Chemical reagents used to modify RNA" help-toggle="help-toggle"><i class="text-secondary fas fa-question-circle"></i></span>
+                        <select class="form-control form-control-lg" id="adv_reagent">
+                            <option value="0">All</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Journal:</label>
+                        <span data-toggle="tooltip" data-placement="top" title="Which journal the data published at" help-toggle="help-toggle"><i class="text-secondary fas fa-question-circle"></i></span>
+                        <select class="form-control form-control-lg" id="adv_journal">
+                            <option value="0">All</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Condition:</label>
+                        <span data-toggle="tooltip" data-placement="top" title="The experimental condition or sample treatment" help-toggle="help-toggle"><i class="text-secondary fas fa-question-circle"></i></span>
+                        <select class="form-control form-control-lg" id="adv_condition">
+                            <option value="0">All</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row px-3 py-1">
+                    <div class="col-lg-3">
+                        <label>Cell line:</label>
+                        <span data-toggle="tooltip" data-placement="top" title="Which cell line or strain  the experiments performed on" help-toggle="help-toggle"><i class="text-secondary fas fa-question-circle"></i></span>
+                        <select class="form-control form-control-lg" id="adv_cellline">
+                            <option value="0">All</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Strand:</label>
+                        <span data-toggle="tooltip" data-placement="top" title="Plus strand (pos) or minus strand (neg)" help-toggle="help-toggle"><i class="text-secondary fas fa-question-circle"></i></span>
+                        <select class="form-control form-control-lg" id="adv_strand">
+                            <option value="0">Both</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Principle</label>
+                        <span data-toggle="tooltip" data-placement="top" title="Whether the structural signal is based on RT stop, RT mutation, or enzyme cleavage" help-toggle="help-toggle"><i class="text-secondary fas fa-question-circle"></i></span>
+                        <select class="form-control form-control-lg" id="adv_principle">
+                            <option value="0">All</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3 align-self-end">
+                        <!--<button class="btn btn-secondary btn-lg btn-block" onclick="javascript:update_tracks();">Confirm</button>-->
+                    </div>
+                </div>
+
+                <div style="margin: 16px;">
+                    <p>Please select tracks in <b>Select</b> column and click <b>Apply</b> to display them in the browser. </p>
+                </div>
+
+                <div id="data-table" style="margin: 16px;"></div>
+
+                <div class="clearfix px-3 py-1">
+                    <div class="float-lg-right pl-3">
+                        <button class="btn btn-success btn-md" onclick="javascript:update_tracks();" style="width:150px;">Apply</button>
+                    </div>
+                    <div class="float-lg-right pr-3">
+                        <label>Only show tracks with structural data coverage </label> <span data-toggle="tooltip" data-placement="top" title="" help-toggle="help-toggle" data-original-title="Only show those tracks with data covered"><i class="text-secondary fas fa-question-circle"></i></span>&nbsp;&nbsp;&nbsp;<input id="filter_covered_cb" type="checkbox" style="width:20px;height:20px;vertical-align: middle;" onclick="javascript:update_filter_table();">
+                    </div>
+                </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="iframe_container">
+        <iframe
+        src="http://jbrowser.zhanglab.net/index2.html?overview=0&tracks=SARS2_sequence%2CGene_annotation%2CicSHAPE_invivo&loc=NC_045512.2%3A1..300&data=RASP%2FSARS2&highlight=&nav=1&tracklist=1"
+        style="border: 1px solid black; width:100%; height:100vh;" id="jbrowser" data-step="4" data-intro="Genome browser. Users can visulize, compare and download data with it. By clicking [About this track], users can view more information about the track literature." data-position='top'>
+        </iframe>
+    </div>
+</div>
+
+<script>
+
+    // Sidebar上显示active
+    $('#browse_sb').addClass('active');
+
+    // 显示tooltip
+    $('[help-toggle="help-toggle"]').tooltip();
+
+    //let tracks_to_show = [];            // 要显示的tracks
+    let sp_name = "{{species}}";        // 当前的物种
+    let loc = "{{loc}}";                // 当前的坐标
+    let highlight = "{{highlight}}";    // 当前需要highlight的区域
+    let current_tracks = "{{tracks}}";          // 初始化的tracks
+    let table_lables = [];   // 表格中的项的label
+    let chrReady = false;
+
+    var species_default_tracks = {
+        'hg38': ['icSHAPE_vivo_NAIN3-pos_score', 'icSHAPE_vivo_NAIN3-neg_score'],
+        'mm10': ['icSHAPE_v65_vivoNAIN3-pos_score', 'icSHAPE_v65_vivoNAIN3-neg_score'],
+        'GRCZ11': ['DMS-WT_64c-pos-score', 'DMS-WT_64c-neg-score'],
+        'TAIR10': ['StructureSeq-TAR10-pos_score', 'StructureSeq-TAR10-neg_score'],
+        'rice': ['StructureSeq2_stdPrimer_pos_score', 'StructureSeq2_stdPrimer_neg_score'],
+        'yeast': ['DMS_Genome-wide_yeast_vivo-pos_score', 'DMS_Genome-wide_yeast_vivo-neg_score'],
+        'ecoli': ['37degree_invivo_WT1-pos_score', '37degree_invivo_WT1-neg_score'],
+        'Pputida': ['Pputida_DMS_vivo-pos_score', 'Pputida_DMS_vivo-neg_score'],
+        'Synechococcus': ['Synechococcus_DMS_vitro_K0-pos_score', 'Synechococcus_DMS_vitro_K0-neg_score'],
+        'Y_pseudotuberculosis': ['Lead-seq_pos_37degree', 'Lead-seq_neg_37degree'],
+        'HIV': ['HIV1-shape'],
+        'Zika': ['Zika-shape-invivo'],
+        'Dengue': ['Dengue-shape'],
+        'HCV': ['NAI_SHAPE'],
+        'STMV': ['Biochem_2013_invitro'],
+        'IAV': ['IAV_invitro_score', 'IAV_invivo_score'],
+        'CMV': ['viRNA_rep1_score', 'viRNA_rep2_score', 'viRNA_rep3_score'],
+        'SARS2': ['icSHAPE_invivo']
+    };
+
+    var species_default_location = {
+        'hg38': "chr12:6534238-6538685",
+        'mm10': "chr6:125161418-125166747",
+        'GRCZ11': "16:17192288-17198114",
+        'TAIR10': "1:26141752-26143582",
+        'rice': "1:40784975-40786776",
+        'yeast': 'I:139050-141719',
+        'ecoli': 'U00096.2:4177840-4178672',
+        'Pputida': 'NC_002947.4:536309-537141',
+        'Synechococcus': 'BX548020.1:971545-972966',
+        'Y_pseudotuberculosis': 'NC_010465:2085109-2088948',
+        'HIV': 'HIV-1:1-9173',
+        'Zika': 'PRVABC59:1-10808',
+        'Dengue': 'EU081177.1:1-10723',
+        'HCV': 'JFH1:1-7742',
+        'STMV': 'STMV:1-1058',
+        'IAV': 'HA:1-1762',
+        'CMV': 'CMV:1-2216',
+        'Nucleotides': 'E.coli_5S:1-96',
+        'SARS2': 'NC_045512.2:1..300'
+    };
+
+
+    window.addEventListener('message', event => {
+        console.log("We received the URL:");
+        console.log(event.data);
+        var url_obj = new URL(event.data);
+        var params = new URLSearchParams(url_obj.search.slice(1));
+        var loc = params.get('loc').replace("..", "-");
+        document.getElementById('search_input').value = loc;
+        chrReady = true;
+        update_filter_table();
+    }, true);
+
+
+    String.prototype.trimLeft = function(charlist) {
+      if (charlist === undefined)
+        charlist = "\s";
+
+      return this.replace(new RegExp("^[" + charlist + "]+"), "");
+    };
+
+    // 修改【选择数据集】右边的方向
+    function toggle_collapse(){
+        $('#collapse_logo').toggleClass('fa-angle-double-down');
+        $('#collapse_logo').toggleClass('fa-angle-double-up');
+        return true;
+    }
+
+    // 更新物种按钮上的文字
+    function update_sp_btn(){
+        var selected_species = [];
+        $.each($("input[name='species']:checked"), function(){
+            selected_species.push(this.nextSibling.textContent);
+        });
+
+        if( selected_species.length>0 )
+            $('#btn').html(selected_species.join(", "));
+        else
+            $('#btn').html("Select Species");
+    }
+
+    // 一旦点击了新的物种，那么就跳转到新的物种页面
+    $('input[type=radio][name=species]').change(function() {
+        update_sp_btn();
+        var species = $("input[name='species']:checked")[0].value;
+        gotoposition(
+            append_seq_annotation_tracks=true,
+            append_current_tracks=false, 
+            more_tracks=species_default_tracks[species],
+            use_default_loc=true,
+            refresh_select=true,
+            ignore_search_input=true);
+        //sleep(3000);
+        //update_filter_table();
+    });
+
+    // 设置URL中的参数
+    function updateURLParameter(url, key, value){
+        var url_obj = new URL(url);
+        var params = new URLSearchParams(url_obj.search.slice(1));
+        params.set(key, value);
+        return url_obj.origin + url_obj.pathname + "?" + params.toString();
+    }
+
+    // 删除URL中的参数
+    function deleteURLParameter(url, key){
+        var url_obj = new URL(url);
+        var params = new URLSearchParams(url_obj.search.slice(1));
+        params.delete(key);
+        var p_str = params.toString()
+        if( p_str.length>0 )
+            return url_obj.origin + url_obj.pathname + "?" + p_str;
+        else
+            return url_obj.origin + url_obj.pathname;
+    }
+
+    // 返回URL中的参数部分
+    function URLparam(url){
+        var url_obj = new URL(url);
+        var params = new URLSearchParams(url_obj.search.slice(1));
+        var p_str = params.toString()
+        return p_str;
+    }
+
+    // update current track list
+    function update_current_track_list_from_table(){
+        var track_list = current_tracks.split(',');
+        table_rows = table.getData();
+        for(var i=0; i<table_rows.length; i++)
+        {
+            var label = table_lables[i];
+            var ind = track_list.indexOf(label);
+            if(ind!=-1 && !table_rows[i]['select'])
+                track_list.splice(ind,1);
+            if(ind==-1 && table_rows[i]['select'])
+                track_list.push(label);
+        }
+        current_tracks = track_list.join(',');
+    }
+
+    // 获得一个基因的范围 chr1:11111-22222
+    function query_gene_range(species, symbol){
+        var url = "/api/get_geneObj_by_symbol/?species="+species+"&symbol="+symbol;
+        var gene_range = false;
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var data = JSON.parse(this.responseText);
+                if(data['error_code']=='0')
+                    gene_range = data['chrId']+":"+String(data['start'])+"-"+String(data['end']);
+            }
+        };
+        xhttp.open("GET", url, false);
+        xhttp.send();
+        return gene_range;
+    }
+
+    function sleep(delay) {
+        var start = new Date().getTime();
+        while (new Date().getTime() < start + delay);
+    }
+
+    function update_tracks() // 相应按钮
+    {
+        update_current_track_list_from_table();
+
+        gotoposition(append_seq_annotation_tracks=false,
+            append_current_tracks=true, 
+            more_tracks=[],
+            use_default_loc=false,
+            refresh_select=false,
+            ignore_search_input=true,
+            remove_highlight=false);
+    }
+
+    // 跳转JBrowser并且更新窗口URL和数据集
+    function gotoposition(
+        append_seq_annotation_tracks=false,
+        append_current_tracks=true, 
+        more_tracks=[],
+        use_default_loc=false,
+        refresh_select=true,
+        ignore_search_input=false,
+        remove_highlight=true){
+        // append_seq_annotation_tracks: 是否加上当前物种的序列和注释tracks
+        // append_current_tracks: 是否加上当前正在显示的tracks
+        // more_tracks: 加上更多的tracks
+        // refresh_select: 是否需要刷新当前的dropdown
+        // ignore_search_input: 是否忽略搜索框中的搜索内容
+
+        var species = $("input[name='species']:checked")[0].value; // 当前选择的物种
+        var same_species = (sp_name==species); // 当前选择的物种是否是原来的物种
+        sp_name = species; // 新的物种赋值给老的物种
+
+        var tracks_str = "";
+        if(append_seq_annotation_tracks)
+        {
+            tracks_str = species_seq_track[species]; // 当前物种对应的序列track名字
+            var anno_track_name = species_anno_track[species]; // 当前物种对应的注释track名字
+            if(anno_track_name!="")
+                tracks_str += ","+anno_track_name;
+        }
+        
+        if(append_current_tracks)
+            tracks_str += ","+current_tracks;
+
+        if(more_tracks.length>0)
+            tracks_str += ","+more_tracks.join(",");
+
+        tracks_str = tracks_str.trimLeft(",");
+
+        var url = window.location.href; // 获得当前窗口的URL
+
+        url = updateURLParameter(url, 'species', species);
+
+        console.log("Before updateURLParameter");
+        console.log(url);
+        console.log(tracks_str);
+
+        url = updateURLParameter(url, 'tracks', tracks_str);
+
+        console.log("After updateURLParameter");
+        console.log(url);
+
+        if(remove_highlight)
+            url = deleteURLParameter(url, 'highlight');
+        url = deleteURLParameter(url, 'loc');
+        url = deleteURLParameter(url, 'data');
+
+        // 获得当前搜索框中的内容
+        var search_content = $('#search_input').val().trim();
+        if(!ignore_search_input && search_content!="") // 是否要忽略搜索
+        {
+            if( search_content.match(/[\d\w]+:\d+\-\d+/) !== null )
+                // 是基因组坐标信息
+                url = updateURLParameter(url, 'loc', search_content);
+            else{
+                // 是基因名字
+                var symbol = search_content;
+                var gene_range = query_gene_range(species, symbol);
+                if(gene_range)
+                    url = updateURLParameter(url, 'loc', gene_range);
+                else{
+                    alerter("Failed", symbol+" not found in database.", "fail");
+                    return;
+                }
+            }
+        }else if(use_default_loc){
+            var default_loc = species_default_location[species];
+            url = updateURLParameter(url, 'loc', default_loc);
+        }
+
+        // 设置浏览器的URL
+        window.history.replaceState('', '', url);
+
+        // 设置当前正在显示的tracks
+        current_tracks = tracks_str;
+
+        //设置JBrowser的URL
+        url = deleteURLParameter(url, 'species');
+        url = updateURLParameter(url, 'data', "RASP/"+species);
+        var url_param = URLparam(url);
+        //console.log("\n\n");
+        //console.log("-------- URL");
+        //console.log(url);
+        //console.log("-------- url_param");
+        //console.log(url_param);
+        //console.log("\n\n");
+        var jbrowser_url = "http://jbrowser.zhanglab.net/index2.html?overview=0&"+url_param
+        $('#jbrowser').attr('src', jbrowser_url);
+        
+        if(!same_species && refresh_select){
+            init_filters(); // 清除dropdown中的所有选项
+            //update_filter_table(); // 更新dropdown选项，需要展示tracks放到tracks_to_show变量中
+        }
+    }
+
+    // 初始化
+    function init_sp_btn(){
+        if(sp_name == "")
+            sp_name = "hg38";
+
+        var species_box = document.getElementsByName("species");
+        for (i=0; i<species_box.length; i++){
+            if (species_box[i].value == sp_name){
+                species_box[i].parentElement.classList.add("active")
+                species_box[i].checked = true;
+                update_sp_btn();
+                break;
+            }
+        }
+
+        //设置src
+        //var url_sp = species_name_map[sp_name];
+        var anno = species_anno_track[sp_name];
+        var seq = species_seq_track[sp_name];
+
+        var default_tracks = seq;
+        if(anno!="")
+            default_tracks += ","+anno;
+        
+        var link = "http://jbrowser.zhanglab.net/index2.html?overview=0&data=RASP/"+sp_name;
+        if(current_tracks!="")
+            link += "&tracks="+current_tracks;
+        else{
+            default_tracks += "," + species_default_tracks[sp_name].join(',');
+            link += "&tracks="+default_tracks;
+            current_tracks = default_tracks;
+        }
+        
+        if(highlight!="")
+            link += "&highlight="+highlight;
+        
+        
+        if(loc!="")
+            link += "&loc="+loc;
+        else
+            link += "&loc="+species_default_location[sp_name];
+
+        $('#jbrowser').attr('src', link);
+
+        update_filter_table();
+    }
+
+    init_sp_btn();
+
+    // 设置表格格式
+    var table = new Tabulator("#data-table", {
+        layout:"fitColumns",
+        maxHeight:"311px",
+        autoResize:true,
+        resizableColumns:true,
+        columns:[
+            {title:"Tech Name", field:"name"},
+            {title:"Reagent", field:"reagent", hozAlign:"left"},
+            {title:"Journal", field:"journal", hozAlign:"left"},
+            {title:"Authors", field:"authors", hozAlign:"left"},
+            {title:"Condition", field:"condition", hozAlign:"left"},
+            {title:"Cellline", field:"cellline", hozAlign:"left"},
+            {title:"Strand", field:"strand", hozAlign:"left"},
+            {title:"Principle", field:"principle", hozAlign:"left"},
+            {title:"Select", field:"select", hozAlign:"center", 
+            editor:true, 
+            formatter:"tickCross",
+            formatterParams:{
+                allowEmpty:false,
+                allowTruthy:true,
+                tickElement:"<span class='text-success'><i class='fas fa-check'></i></span>",
+                crossElement:"<span class='text-danger'><i class='fas fa-times'></i></span>"
+            }}
+        ],
+    });
+
+    // function response_to_checkbox(){
+    //     document.getElementById('jbrowser').contentWindow.postMessage('href', '*');
+    // }
+
+    function update_filter_table(){
+
+        var query_link = "/?datatype=score&species="+sp_name;
+
+        if( $('#filter_covered_cb').prop("checked") == true )
+        {
+            if(chrReady)
+            {
+                //query_link += "&region="+encodeURIComponent(document.getElementById('search_input').value);
+                //console.log("query_link");
+                query_link += "&region="+encodeURIComponent(document.getElementById('search_input').value);
+            }else{
+                document.getElementById('jbrowser').contentWindow.postMessage('href', '*');
+                return;
+            }
+        }
+        chrReady = false;
+
+        /* Filter选择框 */
+        var t = "";
+        t = $('#adv_reagent').children("option:selected").val();
+        if( t != "0")
+            query_link += "&reagent="+encodeURIComponent(t);
+
+        t = $('#adv_journal').children("option:selected").val();
+        if( t != "0")
+            query_link += "&journal="+encodeURIComponent(t);
+
+        t = $('#adv_condition').children("option:selected").val();
+        if( t != "0")
+            query_link += "&condition="+encodeURIComponent(t);
+
+        t = $('#adv_techname').children("option:selected").val();
+        if( t != "0")
+            query_link += "&technology="+encodeURIComponent(t);
+
+        t = $('#adv_cellline').children("option:selected").val();
+        if( t != "0")
+            query_link += "&cellline="+encodeURIComponent(t);
+
+        t = $('#adv_strand').children("option:selected").val();
+        if( t != "0")
+            query_link += "&strand="+encodeURIComponent(t);
+
+        t = $('#adv_principle').children("option:selected").val();
+        if( t != "0")
+            query_link += "&principle="+encodeURIComponent(t);
+
+
+        $.ajax({
+            type: 'get',
+            url: "/api/query_datasets"+query_link,
+            dataType: 'json',
+            success: function(data, status){
+                $('#datasetCount').html( String(data['num_datasets'])+" datasets" );
+                set_options( $('#adv_reagent'), data['reagent'] );
+                set_options( $('#adv_journal'), data['journal'] );
+                set_options( $('#adv_condition'), data['condition'] );
+                set_options( $('#adv_techname'), data['technology'] );
+                set_options( $('#adv_cellline'), data['cellline'] );
+                set_options( $('#adv_strand'), data['strand'] );
+                set_options( $('#adv_principle'), data['principle'] );
+                //tracks_to_show = data.track_labels || [];
+            }
+        });
+
+
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var data = JSON.parse(this.responseText);
+                if(data['error_code']!=0)
+                {
+                    alerter("Error", data['error_text']);
+                    //alert(data['error_text']);
+                    return;
+                }
+                //set_table(data['bw_files']);
+
+                table.clearData();
+                bw_obj_list = data['bw_files'];
+
+                data_list = [];
+                table_lables = [];
+
+                track_list = current_tracks.split(',');
+
+                for(var i=0;i<bw_obj_list.length;i++)
+                {
+                    table_lables.push(bw_obj_list[i].label);
+
+                    var select = true;
+                    if( track_list.indexOf(bw_obj_list[i].label) == -1 )
+                        select = false;
+
+                    data_list.push({
+                        name: bw_obj_list[i].technology, 
+                        reagent: bw_obj_list[i].reagent, 
+                        journal: bw_obj_list[i].journal, 
+                        authors: bw_obj_list[i].firstauthor+"..."+bw_obj_list[i].correspondauthor, 
+                        condition: bw_obj_list[i].condition, 
+                        cellline: bw_obj_list[i].cellline, 
+                        strand: bw_obj_list[i].strand, 
+                        principle: bw_obj_list[i].principle, 
+                        select: select});
+                }
+
+                table.addData(data_list, false);
+            }
+        };
+
+        var query_link = "/api/query_bwfiles"+query_link;
+        //if(!query_link) return;
+        xhttp.open("GET", query_link, true);
+        xhttp.send();
+
+    }
+
+    function init_filters(){
+        $('#adv_reagent').find('option:not(:first)').remove();
+        $('#adv_journal').find('option:not(:first)').remove();
+        $('#adv_condition').find('option:not(:first)').remove();
+        $('#adv_techname').find('option:not(:first)').remove();
+        $('#adv_cellline').find('option:not(:first)').remove();
+        $('#adv_strand').find('option:not(:first)').remove();
+        $('#adv_principle').find('option:not(:first)').remove();
+    }
+
+    function set_options(select_obj, option_text_list){
+        if( select_obj.children("option:selected").val()!="0" )
+            return;
+
+        select_obj.find('option:not(:first)').remove();
+        for(var i=0;i<option_text_list.length;i++){
+            var option = document.createElement('option');
+            option.text = option_text_list[i];
+            option.value = option_text_list[i];
+            select_obj.append(option);
+        }
+    }
+
+    $('#adv_reagent').on('change', function(){ update_filter_table(); });
+    $('#adv_journal').on('change', function(){ update_filter_table(); });
+    $('#adv_condition').on('change', function(){ update_filter_table(); });
+    $('#adv_techname').on('change', function(){ update_filter_table(); });
+    $('#adv_cellline').on('change', function(){ update_filter_table(); });
+    $('#adv_strand').on('change', function(){ update_filter_table(); });
+    $('#adv_principle').on('change', function(){ update_filter_table(); });
+
+    function update_dropdown(){
+        var search_symbol = $('#search_input').val().trim();
+        var species = $('input[name="species"]:checked').val();
+        if(search_symbol != ""){
+            var query_link = "/api/query_symbol_match/?species="+species+"&symbol="+search_symbol;
+            $.ajax({
+                type: 'get',
+                url: query_link,
+                dataType: 'json',
+                success: function(data, status){
+                    $("#search_input_dd").empty();
+                    var symbols = data['symbols'];
+                    if(symbols.length==0){
+                        return;
+                    }
+                    for(var i=0;i<symbols.length;i++)
+                        $('#search_input_dd').append($('<button type="button" class="dropdown-item" onclick="set_content(this);">'+symbols[i]+'</button>'));
+                }
+            });
+        }
+    }
+
+    function set_content(btn){
+        $('#search_input').val(btn.innerText);
+    }
+
+    // 当点击Go按钮的时候响应
+    function response_GO(){
+        gotoposition(false,true,[],false,true,false);
+        //sleep(3000);
+        //update_filter_table();
+    }
+
+    document.getElementById('jbrowser').onload = function() { 
+        update_filter_table();
+    };
+
+
+    /*
+    table.addData([
+        {name:"bob", reagent:"NAI-N3", journal: "PNAS", authors: "Pan Li", condition: "in vivo", cellline: "HEK293T", strand:"+", principle: "Mutation", "Select": false}, 
+        {name:"bob", reagent:"NAI-N3", journal: "PNAS", authors: "Pan Li", condition: "in vivo", cellline: "HEK293T", strand:"+", principle: "Mutation", "Select": false}
+    ], true);
+    */
+
+</script>
+{% endblock main %}
+

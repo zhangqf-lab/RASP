@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<title>Sructure Prediction</title>
+{% endblock head %}
+
+{% block main %}
+
+<div id="waiting" style="display:none;">
+    <div class="spinner-border spinner-border mx-auto d-block" style="width:100px;height:100px;"></div>
+    <div class="text-center mt-2 larger-text">Please waiting...</div>
+</div>
+
+<div id="main">
+    <form action="display_predstr" class="needs-validation" method="post" id="predstrForm">
+        {% csrf_token %}
+
+        <h3 class="text-center mb-2" ><span style="font-family: Arial, Helvetica, sans-serif">Secondary Structure Prediction</span></h3>
+
+        <div class="row mb-3">
+            <div class="col-lg-7" data-step="1" data-intro="Input your sequence here in fasta format. Only single seuquence are permitted" data-position='right'>
+                <textarea class="border rounded text-input-pale-blue w-100" style="height:50vh;" name="sequence" placeholder="Fasta sequence here...(Only single sequence is allowed)&#10;>rna&#10;ATGCTAGACTAGCATGC&#10;ACTGACTCGATGCTGC" id="sequence" required></textarea>
+                <div class="invalid-feedback larger-text">Please provide your sequence</div>
+            </div>
+            <div class="col-lg-5" data-step="2" data-intro="Input your scores here. Seperated with blank." data-position='left'>
+                <textarea class="border rounded text-input-pale-blue w-100" style="height:50vh;" name="constraint" placeholder="SHAPE constraint here (seperated by blank or break)...&#10;0.453&#10;0.581 0.99&#10;NULL&#10;0.67&#10;..." id="constraint"></textarea>
+                <div class="invalid-feedback larger-text">The length is different from sequence</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4" data-step="3" data-intro="Intercept, it will add to the psuedo free-energy" data-position='right'>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">Intercept</div>
+                    </div>
+                    <input type="number" class="form-control" value="-0.6" id="si" name="intercept" required>
+                </div>
+            </div>
+            <div class="col-lg-4" data-step="4" data-intro="Slope, it will be multiplied with the scores as psuedo free-energy" data-position='left'>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">Slope</div>
+                    </div>
+                    <input type="number" class="form-control" value="1.8" id="sm" name="slope" required>
+                </div>
+            </div>
+            <div class="col-lg-2">
+                <button class="btn btn-outline-secondary btn-block btn-outline-dark-blue" onclick="give_example()" type="button">Example</button>
+            </div>
+            <div class="col-lg-2">
+                <input type="button" class="btn btn-outline-secondary btn-block btn-outline-dark-blue" value="Submit" id="submit_btn">
+            </div>
+        </div>
+        <div class="row">
+            <!--<div class="d-none text-danger col-lg-10 larger-text" id="v1">Please fill the blank</div>-->
+            <div class="invalid-feedback">Please fill the blank</div>
+        </div>
+    </form>
+
+    <div class="mt-3">
+        <p class="mb-1">RNA structure prediction is powered by Fold tool in  <a href="https://rna.urmc.rochester.edu/RNAstructure.html" class="text-primary">RNAstructure package</a>. The structure score of the i<sub>th</sub> base can be converted to a pseudo-free energy according to this formula (<a href="https://www.pnas.org/content/106/1/97" class="text-primary">Katherine et al.</a>):</p>
+        <p class="text-center">
+            &Delta;G<sub>score</sub>(<i>i</i>) = slope * ln[score(<i>i</i>)+1] + intercept
+        </p>
+    </div>
+</div>
+
+<br>
+
+<div class="container-fluid my-3 px-0" id="disp" data-step="3" data-intro="If you save [Add] a sequence in TranView page, it will show at here" data-position='left'>
+    <div id="ta_0" class="mb-3" style="display:block;">
+      <div class="card">
+        <div class="card-header py-1 mb-0 position-relative" id="heading0" style="background-color: #e8f3f9;">
+          <h5 class="mb-0 d-inline-block">
+            <button class="btn btn-link" data-toggle="collapse" data-target="#collapse0" aria-expanded="true" aria-controls="collapse0" style="text-decoration: none;">
+                <h4 class="mb-0" style="text-decoration:none;color:#2196f3"><i class="fas fa-feather-alt"></i>&nbsp;How to load data from transcript summary page</h4>
+            </button>
+          </h5>
+        </div>
+        <div id="collapse0" class="collapse hide" aria-labelledby="heading0" data-parent="#ta_0">
+            <div class="card-body">
+                <p>Users can manually enter the sequence and structure score to predict the secondary structure, or select the sequence from the transcipt summary page. Here is an example:</p>
+                <ol>
+                    <li>Go to transcript summary page of ORF8 of SARS-CoV-2 (<a href="http://rasp.zhanglab.net/transView/?species=SARS2&tid=8" target="_blank" class="text-info"><b>link</b></a>) </li>
+                    <li>Scroll to <b>Load probing data</b> panel and select the dataset<br>
+                        <div class="text-center">
+                            <div class="d-inline-block" style="max-width: 1000px">
+                                <img src="/static/img/tutorial/structurePredict/1.png" alt="Load probing data" style="max-width: 100%;" />
+                            </div>
+                        </div>
+                    </li>
+                    <li>After the structure score loaded, scroll to <b>Sequence</b> panel and select the first 100nt. Click the <b>Predict</b> button<br>
+                        <div class="text-center">
+                            <div class="d-inline-block" style="max-width: 1000px">
+                                <img src="/static/img/tutorial/structurePredict/2.png" alt="Select a region" style="max-width: 100%;" />
+                            </div>
+                        </div>
+                    </li>
+                    <li>A new "Secondary Structure Prediction" page will pop up. The sequence and structure scores are filled in. Click the "Submit" button<br>
+                        <div class="text-center">
+                            <div class="d-inline-block" style="max-width: 1000px">
+                                <img src="/static/img/tutorial/structurePredict/3.png" alt="Secondary Structure Prediction" style="max-width: 100%;" />
+                            </div>
+                        </div>
+                    </li>
+                    <li>Predicted structures are showed, users can visualize with forna or VARNA<br>
+                        <div class="text-center">
+                            <div class="d-inline-block" style="max-width: 1000px">
+                                <img src="/static/img/tutorial/structurePredict/4.png" alt="Predicted structures" style="max-width: 100%;" />
+                            </div>
+                        </div>
+                    </li>
+                </ol>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $('#predict_sb').addClass('active');
+
+    function give_example(){
+        var seq_obj = document.getElementById('sequence');
+        var shape_obj = document.getElementById('constraint');
+        var si_obj = document.getElementById('si');
+        var sm_obj = document.getElementById('sm');
+
+        seq_obj.value = ">human_5S\nGUCUACGGCCAUACCACCCUGAACGCGCCCGAUCUCGUCUGAUCUCGGAAGCUAAGCAGGGUCGGGCCUGGUUAGUACUUGGAUGGGAGACCGCCUGGGAAUACCGGGUGCUGUAGGCUUU";
+        shape_obj.value = "NULL NULL    NULL    NULL    NULL    0.020   0.064   0.049   0.025   1.000   1.000   1.000   0.375   0.084   0.272   0.070   0.090   0.073   0.062   0.035   0.323   1.000   0.110   0.317   0.000   0.079   0.077   0.101   0.041   0.007   0.256   0.108   0.069   0.227   0.018   0.149   0.598   0.692   1.000   0.186   0.212   0.295   0.145   0.083   0.000   0.013   0.006   0.058   0.962   0.111   0.000   0.089   0.284   0.224   0.374   0.161   0.018   0.019   0.000   0.006   0.060   0.031   0.092   0.012   0.042   0.011   0.002   0.000   0.000   0.000   0.042   0.015   0.000   0.015   0.026   0.000   0.000   0.000   0.000   0.000   0.003   0.023   0.359   0.026   0.002   0.000   0.030   0.024   0.126   0.039   NULL    NULL    NULL    NULL    NULL    NULL    NULL    NULL    NULL    NULL    NULL    NULL    NULL    NULL    NULL    NULL    NULL    NULL    NULL    NULL    NULL    NULL    NULL    NULL    NULL    NULL    NULL    NULL    NULL    NULL    NULL";
+        si_obj.value = "-0.6";
+        sm_obj.value = "1.8";
+        return false;
+    }
+
+    /* 
+    *
+    *         这里验证序列和SHAPE是没有问题的
+    *
+    */
+
+    $('#submit_btn')[0].addEventListener("click", function(event){
+
+        var sequence = $("textarea[name='sequence']").val();
+        var seq_result = valid_textarea_seq(sequence, must_strict_fasta=false, min_seq_num=1, max_seq_num=1, min_length=5, max_length=1500, alphabet=['A','C','T','G','U']);
+
+        if(seq_result['error_type'] != 0)
+        {
+            event.preventDefault();
+            alerter("Error", seq_result['error_msg']);
+            return false;
+        }
+
+        var score_text = $("textarea[name='constraint']").val();
+        var score_result = valid_textarea_score(score_text, must_strict_fasta=false, min_score_num=0, max_score_num=1, min_length=5, max_length=1500)
+
+        if(score_result['error_type']!=0 && score_result['error_type']!=1)
+        {
+            event.preventDefault();
+            alerter("Error", score_result['error_msg']);
+            return false;
+        }
+
+        if(score_result['error_type']!=1)
+        {
+            var score_keys = Object.keys(score_result['scoredict']);
+            var seq_keys = Object.keys(seq_result['sequence']);
+
+            seq_keys.sort();
+            score_keys.sort();
+            for(var i=0;i<seq_keys.length;i++){
+                if( seq_result['sequence'][seq_keys[i]].length != score_result['scoredict'][score_keys[i]].length )
+                {
+                    console.log( seq_result['sequence'][seq_keys[i]].length );
+                    console.log( score_result['scoredict'][score_keys[i]] );
+                    alerter("Error", seq_keys[i] + " has different length for score and sequence");
+                    return false;
+                }
+            }
+        }
+
+        $("#predstrForm").submit();
+        waiting();
+        return true;
+    });
+
+    $('#sequence').html("{{sequence}}");
+    $('#constraint').html("{{shape}}");
+    $('#si').html("{{slope}}");
+    $('#sm').html("{{intercept}}");
+
+    function waiting(){
+        $('#waiting').show();
+        $('#main').hide();
+        $('#ta_0').hide();
+    }
+
+</script>
+{% endblock main %}

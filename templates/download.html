@@ -1,0 +1,677 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<title>Download</title>
+<link href="/static/tabulator/dist/css/tabulator.min.css" rel="stylesheet">
+<script type="text/javascript" src="/static/tabulator/dist/js/tabulator.min.js"></script>
+{% endblock head %}
+
+{% block help %}
+<div class="customizer d-none d-xl-block">
+    <a class="customizer-toggle bg-info text-light" href="javascript:void(0);" title="Document">
+        <i class="fas fa-book-reader"></i>
+    </a>
+    <div class="customizer-content p-2" style="overflow-y:scroll;">
+        <h3 class="text-uppercase mb-0 mt-2 text-info">Help</h3>
+        <hr>
+        <h5 class="text-info">How to convert bigWig (.bw) files to bedGraph files</h5>
+        <p>
+            Download <code>bigWigToBedGraph</code> tool from <a href="http://hgdownload.soe.ucsc.edu/admin/exe/" target="_blank" class="text-info">UCSC tools page</a>. Type <code>bigWigToBedGraph in.bigWig out.bedGraph</code> to convert the bigWig binary to bedGraph plain text.
+        </p>
+    </div>
+</div>
+{% endblock help %}
+
+{% block main %}
+
+<div class="mb-3">
+  <div class="card">
+    <div class="card-header py-1 mb-0">
+        <h4 class="mb-0 text-secondary d-inline-block py-2" style="font-family:Roboto;" data-step="1" data-intro="Download genome fasta file and gff annotation file. Users can convert genome-based scores to transcript-based scores." data-position='bottom'>
+            Download sequences and annotation files 
+        </h4>
+    </div>
+    <div style="overflow-x: scroll;">
+        <table class="table table-hover mb-0" id="download_table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Species</th>
+                    <th>Genome</th>
+                    <th>Annotation</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td rowspan="3" class="font-weight-bold text-center align-middle">Animals</td>
+                    <td>Human</td>
+                    <td><a href="/api/downloadfile/?filetype=fasta&filelist=hg38.fa.gz">hg38.fa.gz</a></td>
+                    <td><a href="/api/downloadfile/?filetype=gff&filelist=hg38.gff3.gz">hg38.gff3.gz</a></td>
+                </tr>
+                <tr>
+                    <td>Mouse</td>
+                    <td><a href="/api/downloadfile/?filetype=fasta&filelist=mm10.fa.gz">mm10.fa.gz</a></td>
+                    <td><a href="/api/downloadfile/?filetype=gff&filelist=mm10.gff3.gz">mm10.gff3.gz</a></td>
+                </tr>
+                <tr>
+                    <td>Zebrafish</td>
+                    <td><a href="/api/downloadfile/?filetype=fasta&filelist=GRCZ11.fa.gz">GRCZ11.fa.gz</a></td>
+                    <td><a href="/api/downloadfile/?filetype=gff&filelist=GRCZ11.gff3.gz">GRCZ11.gff3.gz</a></td>
+                </tr>
+
+                <tr>
+                    <td rowspan="2" class="font-weight-bold text-center align-middle">Plants</td>
+                    <td>A. thaliana</td>
+                    <td><a href="/api/downloadfile/?filetype=fasta&filelist=TAIR10.fa.gz">TAIR10.fa.gz</a></td>
+                    <td><a href="/api/downloadfile/?filetype=gff&filelist=TAIR10.gff3.gz">TAIR10.gff3.gz</a></td>
+                </tr>
+                <tr>
+                    <td>Rice</td>
+                    <td><a href="/api/downloadfile/?filetype=fasta&filelist=rice.fa.gz">rice.fa.gz</a></td>
+                    <td><a href="/api/downloadfile/?filetype=gff&filelist=rice.gff3.gz">rice.gff3.gz</a></td>
+                </tr>
+
+                <tr>
+                    <td rowspan="5" class="font-weight-bold text-center align-middle">Bacteria & fungi</td>
+                    <td>Yeast</td>
+                    <td><a href="/api/downloadfile/?filetype=fasta&filelist=yeast.fa.gz">yeast.fa.gz</a></td>
+                    <td><a href="/api/downloadfile/?filetype=gff&filelist=yeast.gff3.gz">yeast.gff3.gz</a></td>
+                </tr>
+                <tr>
+                    <td>E. coli</td>
+                    <td><a href="/api/downloadfile/?filetype=fasta&filelist=ecoli.fa.gz">ecoli.fa.gz</a></td>
+                    <td><a href="/api/downloadfile/?filetype=gff&filelist=ecoli.gff3.gz">ecoli.gff3.gz</a></td>
+                </tr>
+                <tr>
+                    <td>P. putida</td>
+                    <td><a href="/api/downloadfile/?filetype=fasta&filelist=Pputida.fa.gz">Pputida.fa.gz</a></td>
+                    <td><a href="/api/downloadfile/?filetype=gff&filelist=Pputida.gff3.gz">Pputida.gff3.gz</a></td>
+                </tr>
+                <tr>
+                    <td>Synechococcus</td>
+                    <td><a href="/api/downloadfile/?filetype=fasta&filelist=Synechococcus.fa.gz">Synechococcus.fa.gz</a></td>
+                    <td><a href="/api/downloadfile/?filetype=gff&filelist=Synechococcus.gff3.gz">Synechococcus.gff3.gz</a></td>
+                </tr>
+                <tr>
+                    <td>Y.pseudotuberculosis</td>
+                    <td><a href="/api/downloadfile/?filetype=fasta&filelist=Y_pseudotuberculosis.fa.gz">Y_pseudotuberculosis.fa.gz</a></td>
+                    <td><a href="/api/downloadfile/?filetype=gff&filelist=Y_pseudotuberculosis.gff3.gz">Y_pseudotuberculosis.gff3.gz</a></td>
+                </tr>
+
+                <tr>
+                    <td rowspan="8" class="font-weight-bold text-center align-middle">Virus</td>
+                    <td>HIV</td>
+                    <td><a href="/api/downloadfile/?filetype=fasta&filelist=HIV.fa.gz">HIV.fa.gz</a></td>
+                    <td><a href="/api/downloadfile/?filetype=gff&filelist=HIV.gff3.gz">HIV.gff3.gz</a></td>
+                </tr>
+                <tr>
+                    <td>Dengue virus</td>
+                    <td><a href="/api/downloadfile/?filetype=fasta&filelist=Dengue.fa.gz">Dengue.fa.gz</a></td>
+                    <td><a href="/api/downloadfile/?filetype=gff&filelist=Dengue.gff3.gz">Dengue.gff3.gz</a></td>
+                </tr>
+                <tr>
+                    <td>ZIKV</td>
+                    <td><a href="/api/downloadfile/?filetype=fasta&filelist=ZIKV.fa.gz">ZIKV.fa.gz</a></td>
+                    <td><a href="/api/downloadfile/?filetype=gff&filelist=ZIKV.gff3.gz">ZIKV.gff3.gz</a></td>
+                </tr>
+                <tr>
+                    <td>HCV</td>
+                    <td><a href="/api/downloadfile/?filetype=fasta&filelist=HCV.fa.gz">HCV.fa.gz</a></td>
+                    <td><a href="/api/downloadfile/?filetype=gff&filelist=HCV.gff3.gz">HCV.gff3.gz</a></td>
+                </tr>
+                <tr>
+                    <td>STMV</td>
+                    <td><a href="/api/downloadfile/?filetype=fasta&filelist=STMV.fa.gz">STMV.fa.gz</a></td>
+                    <td><a href="/api/downloadfile/?filetype=gff&filelist=STMV.gff3.gz">STMV.gff3.gz</a></td>
+                </tr>
+                <tr>
+                    <td>CMV</td>
+                    <td><a href="/api/downloadfile/?filetype=fasta&filelist=CMV.fa.gz">CMV.fa.gz</a></td>
+                    <td><a href="/api/downloadfile/?filetype=gff&filelist=CMV.gff3.gz">CMV.gff3.gz</a></td>
+                </tr>
+                <tr>
+                    <td>IAV</td>
+                    <td><a href="/api/downloadfile/?filetype=fasta&filelist=IAV.fa.gz">IAV.fa.gz</a></td>
+                    <td><a href="/api/downloadfile/?filetype=gff&filelist=IAV.gff3.gz">IAV.gff3.gz</a></td>
+                </tr>
+                <tr>
+                    <td>SARS-CoV-2</td>
+                    <td><a href="/api/downloadfile/?filetype=fasta&filelist=SARS2.fa.gz">SARS2.fa.gz</a></td>
+                    <td><a href="/api/downloadfile/?filetype=gff&filelist=SARS2.gff3.gz">SARS2.gff3.gz</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+  </div>
+</div>
+
+<style>
+</style>
+
+<div class="mb-3">
+  <div class="card">
+    <div class="card-header py-1 mb-0" data-step="2" data-intro="Download genome-based bigwig file." data-position='bottom'>
+        <h4 class="mb-0 text-secondary d-inline-block py-2" style="font-family:Roboto;">
+            Select files to download
+            <!-- <a data-toggle="tooltip" data-placement="top" title="First select the criterions, and then click the Confirm button to display a list of datasets." help-toggle="help-toggle" href="#"><i class="text-secondary fas fa-question-circle"></i></a> -->
+        </h4>
+    </div>
+    <div class="mb-2">
+        <div class="card-body">
+            <div class="row p-3">
+                <div class="col-lg-4">
+                    <label>Species: <span class="text-danger" id="species_label">(Select species first)</span></label>
+                    <select class="form-control form-control-lg" id="adv_species">
+                        <option value="0">Select Species</option>
+                        {% for species in species_list %}
+                        <option value="{{species}}">{{species}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-lg-4">
+                    <label>Journal:</label>
+                    <span data-toggle="tooltip" data-placement="top" title="Which journal the data published at" help-toggle="help-toggle"><i class="text-secondary fas fa-question-circle"></i></span>
+                    <select class="form-control form-control-lg" id="adv_journal">
+                        <option value="0">All</option>
+                    </select>
+                </div>
+                <div class="col-lg-4">
+                    <label>Year:</label>
+                    <span data-toggle="tooltip" data-placement="top" title="The published year of the paper" help-toggle="help-toggle"><i class="text-secondary fas fa-question-circle"></i></span>
+                    <select class="form-control form-control-lg" id="adv_year">
+                        <option value="0">All</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row p-3">
+                <div class="col-lg-4">
+                    <label>The first author:</label>
+                    <span data-toggle="tooltip" data-placement="top" title="The first author in the author list" help-toggle="help-toggle"><i class="text-secondary fas fa-question-circle"></i></span>
+                    <select class="form-control form-control-lg" id="adv_firstauthor">
+                        <option value="0">All</option>
+                    </select>
+                </div>
+                <div class="col-lg-4">
+                    <label>The corresponding author:</label>
+                    <span data-toggle="tooltip" data-placement="top" title="The last author in the author list" help-toggle="help-toggle"><i class="text-secondary fas fa-question-circle"></i></span>
+                    <select class="form-control form-control-lg" id="adv_corresauthor">
+                        <option value="0">All</option>
+                    </select>
+                </div>
+                <div class="col-lg-4">
+                    <label>Title:</label>
+                    <span data-toggle="tooltip" data-placement="top" title="The title of the paper" help-toggle="help-toggle"><i class="text-secondary fas fa-question-circle"></i></span>
+                    <select class="form-control form-control-lg" id="adv_title">
+                        <option value="0">Select title</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row p-3">
+                <div class="col-lg-4">
+                    <label>Tech name:</label>
+                    <span data-toggle="tooltip" data-placement="top" title="The name of technology" help-toggle="help-toggle"><i class="text-secondary fas fa-question-circle"></i></span>
+                    <select class="form-control form-control-lg" id="adv_technology">
+                        <option value="0">All</option>
+                    </select>
+                </div>
+                <div class="col-lg-4">
+                    <label>Reagent:</label>
+                    <span data-toggle="tooltip" data-placement="top" title="Chemical reagents used to modify RNA" help-toggle="help-toggle"><i class="text-secondary fas fa-question-circle"></i></span>
+                    <select class="form-control form-control-lg" id="adv_reagent">
+                        <option value="0">All</option>
+                    </select>
+                </div>
+                <div class="col-lg-4">
+                    <label>Condition:</label>
+                    <span data-toggle="tooltip" data-placement="top" title="The experimental condition or sample treatment" help-toggle="help-toggle"><i class="text-secondary fas fa-question-circle"></i></span>
+                    <select class="form-control form-control-lg" id="adv_condition">
+                        <option value="0">All</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row p-3">
+                <div class="col-lg-4">
+                    <label>Score source:</label>
+                    <span data-toggle="tooltip" data-placement="top" title="The data comes from the original author or our processing" help-toggle="help-toggle"><i class="text-secondary fas fa-question-circle"></i></span>
+                    <select class="form-control form-control-lg" id="adv_source">
+                        <option value="0">All</option>
+                    </select>
+                </div>
+                <div class="col-lg-4">
+                    <label>Cell line:</label>
+                    <span data-toggle="tooltip" data-placement="top" title="Which cell line or strain  the experiments performed on" help-toggle="help-toggle"><i class="text-secondary fas fa-question-circle"></i></span>
+                    <select class="form-control form-control-lg" id="adv_cellline">
+                        <option value="0">All</option>
+                    </select>
+                </div>
+                <div class="col-lg-4">
+                    <label>Strand:</label>
+                    <span data-toggle="tooltip" data-placement="top" title="Plus strand (pos) or minus strand (neg)" help-toggle="help-toggle"><i class="text-secondary fas fa-question-circle"></i></span>
+                    <select class="form-control form-control-lg" id="adv_strand">
+                        <option value="0">Both</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row p-3">
+                <div class="col-lg-4">
+                    <label>Principle:</label>
+                    <span data-toggle="tooltip" data-placement="top" title="Whether the structural signal is based on RT stop, RT mutation, or enzyme cleavage" help-toggle="help-toggle"><i class="text-secondary fas fa-question-circle"></i></span>
+                    <select class="form-control form-control-lg" id="adv_principle">
+                        <option value="0">All</option>
+                    </select>
+                </div>
+                <div class="col-lg-4">
+                    <label>Data type:</label>
+                    <span data-toggle="tooltip" data-placement="top" title="Score means normalized reactivity score. RT means the raw unprocessed RT stop number" help-toggle="help-toggle"><i class="text-secondary fas fa-question-circle"></i></span>
+                    <select class="form-control form-control-lg" id="adv_datatype">
+                        <option value="0">All</option>
+                    </select>
+                </div>
+                <div class="col-lg-4 align-self-end">
+                    <!-- <button class="btn btn-secondary btn-lg btn-block" id="filtbtn">Confirm</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--
+    <div class="px-2 mb-2">
+        <div class="mb-0" style="overflow:scroll;max-height:500px">
+            <table class="table table-bordered table-hover table-sm mb-0">
+                <thead class="text-center">
+                    <tr>
+                        <th>Select</th>
+                        <th>Species</th>
+                        <th>Journal</th>
+                        <th>Year</th>
+                        <th>DOI</th>
+                        <th>Authors</th>
+                        <th>Technology</th>
+                        <th>Reagent</th>
+                        <th>Condition</th>
+                        <th>Cell line</th>
+                        <th>Strand</th>
+                        <th>Princile</th>
+                        <th>Data type</th>
+                        <th>file size</th>
+                    </tr>
+                </thead>
+                <tbody id="tbdy" class="text-center" style="">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    -->
+    <div id="data-table" style=" margin: 0 30px 10px 30px"></div>
+
+    <div class="row pt-1 px-2 pb-3">
+        <div class="col-lg-auto">
+            <button class="btn btn-light" id="selectall_btn">Select All</button>
+        </div>
+        <div class="col-lg-auto">
+            <button class="btn btn-light" id="unselectall_btn">Unselect All</button>
+        </div>
+        <div class="col-lg-auto">
+            <button class="btn btn-block btn-success" onclick="downloadbw('bigwig');">Download as bigWig</button>
+        </div>
+        <div class="col-lg-auto">
+            <button class="btn btn-block btn-success" onclick="downloadbw('bed');">Download as bed</button>
+        </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+    $('#download_sb').addClass('active');
+
+    // 显示tooltip
+    $('[help-toggle="help-toggle"]').tooltip();
+
+    $('#download_table a').each(function(){
+        $(this).addClass('text-primary');
+    });
+    $('td[rowspan]').css("background-color", "white");
+
+    function get_query_link(api_link)
+    {
+        var species = $('#adv_species').children("option:selected").val();
+        if(species=="0")
+        {
+            alerter("Error", "Please select species at first!", "warning");
+            return false;
+        }
+        var query_link = "/api/"+api_link+"/?species="+humanName2dbName[species];
+
+        /* Filter选择框 */
+        var t = "";
+        t = $('#adv_journal').children("option:selected").val();
+        if( t != "0")
+            query_link += "&journal="+encodeURIComponent(t);
+
+        t = $('#adv_year').children("option:selected").val();
+        if( t != "0")
+            query_link += "&year="+encodeURIComponent(t);
+
+        t = $('#adv_firstauthor').children("option:selected").val();
+        if( t != "0")
+            query_link += "&firstauthor="+encodeURIComponent(t);
+
+        t = $('#adv_corresauthor').children("option:selected").val();
+        if( t != "0")
+            query_link += "&corresauthor="+encodeURIComponent(t);
+
+        t = $('#adv_title').children("option:selected").val();
+        if( t != "0")
+            query_link += "&title="+encodeURIComponent(t);
+
+        t = $('#adv_datatype').children("option:selected").val();
+        if( t != "0")
+            query_link += "&datatype="+encodeURIComponent(t);
+
+        t = $('#adv_technology').children("option:selected").val();
+        if( t != "0")
+            query_link += "&technology="+encodeURIComponent(t);
+
+        t = $('#adv_reagent').children("option:selected").val();
+        if( t != "0")
+            query_link += "&reagent="+encodeURIComponent(t);
+
+        t = $('#adv_condition').children("option:selected").val();
+        if( t != "0")
+            query_link += "&condition="+encodeURIComponent(t);
+
+        t = $('#adv_source').children("option:selected").val();
+        if( t != "0")
+            query_link += "&source="+encodeURIComponent(t);
+
+        t = $('#adv_cellline').children("option:selected").val();
+        if( t != "0")
+            query_link += "&cellline="+encodeURIComponent(t);
+
+        t = $('#adv_strand').children("option:selected").val();
+        if( t != "0")
+            query_link += "&strand="+encodeURIComponent(t);
+
+        t = $('#adv_principle').children("option:selected").val();
+        if( t != "0")
+            query_link += "&principle="+encodeURIComponent(t);
+
+        return query_link;
+    }
+
+    function update_filter_table(){
+        var query_link = get_query_link("query_datasets");
+        if(!query_link)
+            return;
+        //console.log(query_link);
+        //console.log(encodeURI(query_link));
+
+        $.ajax({
+            type: 'get',
+            url: query_link,
+            dataType: 'json',
+            success: function(data, status){
+                //console.log("Update datasets!!!!!!!!!!!!!!!!!!!!!!!!!");
+                
+                set_options( $('#adv_technology'), data['technology'] );
+                set_options( $('#adv_reagent'), data['reagent'] );
+                set_options( $('#adv_journal'), data['journal'] );
+                set_options( $('#adv_year'), data['year'] );
+                set_options( $('#adv_firstauthor'), data['firstauthor'] );
+                set_options( $('#adv_corresauthor'), data['corresauthor'] );
+                set_options( $('#adv_title'), data['title'] );
+                set_options( $('#adv_datatype'), data['datatype'] );
+                set_options( $('#adv_condition'), data['condition'] );
+                set_options( $('#adv_source'), data['source'] );
+                set_options( $('#adv_cellline'), data['cellline'] );
+                set_options( $('#adv_strand'), data['strand'] );
+                set_options( $('#adv_principle'), data['principle'] );
+            }
+        });
+
+        reset_dataset_table();
+    }
+
+    $('#selectall_btn').click(function(){ 
+        //$('input[name="bwfile"]').prop('checked', true); 
+        var update_list = [];
+        var data_list = table.getData();
+        for(var i=0; i<data_list.length; i++)
+            update_list.push({id:i+1, select:true});
+        table.updateData(update_list);
+    });
+    $('#unselectall_btn').click(function(){
+        var update_list = [];
+        var data_list = table.getData();
+        for(var i=0; i<data_list.length; i++)
+            update_list.push({id:i+1, select:false});
+        table.updateData(update_list);
+    });
+
+    function set_options(select_obj, option_text_list){
+        if( select_obj.children("option:selected").val()!="0" ){
+            return;
+        }
+        select_obj.find('option:not(:first)').remove();
+        for(var i=0;i<option_text_list.length;i++){
+            var option = document.createElement('option');
+            if( $('#adv_title')==select_obj )
+                option.text = option_text_list[i].slice(0,50)+"...";
+            else
+                option.text = option_text_list[i];
+            option.value = option_text_list[i];
+            select_obj.append(option);
+        }
+    }
+
+    function reset_options(){
+        if( $('#adv_species').children("option:selected").val()=="0" ){
+            $('#species_label').show();
+        }else{
+            $('#species_label').hide();
+        }
+        $('#adv_technology').find('option:not(:first)').remove();
+        $('#adv_reagent').find('option:not(:first)').remove();
+        $('#adv_journal').find('option:not(:first)').remove();
+        $('#adv_year').find('option:not(:first)').remove();
+        $('#adv_firstauthor').find('option:not(:first)').remove();
+        $('#adv_corresauthor').find('option:not(:first)').remove();
+        $('#adv_title').find('option:not(:first)').remove();
+        $('#adv_datatype').find('option:not(:first)').remove();
+        $('#adv_condition').find('option:not(:first)').remove();
+        $('#adv_source').find('option:not(:first)').remove();
+        $('#adv_cellline').find('option:not(:first)').remove();
+        $('#adv_strand').find('option:not(:first)').remove();
+        $('#adv_principle').find('option:not(:first)').remove();
+    }
+
+    $('#filtbtn').on('click', function(){
+        reset_dataset_table()
+    });
+
+    function reset_dataset_table(){
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var data = JSON.parse(this.responseText);
+                if(data['error_code']!=0)
+                {
+                    alerter("Error", data['error_text']);
+                    //alert(data['error_text']);
+                    return;
+                }
+                set_table(data['bw_files']);
+            }
+        };
+        var query_link = get_query_link("query_bwfiles");
+        if(!query_link) return;
+        xhttp.open("GET", query_link, true);
+        xhttp.send();
+    }
+
+    // 设置表格格式
+    var table = new Tabulator("#data-table", {
+        layout:"fitColumns",
+        maxHeight:"400px",
+        autoResize:true,
+        resizableColumns:true,
+        columns:[
+            //{title:"Select", field:"select", hozAlign:"center", editor:true, formatter:"tickCross" },
+            {title:"Select", field:"select", hozAlign:"center", 
+            editor:true, 
+            formatter:"tickCross",
+            formatterParams:{
+                allowEmpty:false,
+                allowTruthy:true,
+                tickElement:"<span class='text-success'><i class='fas fa-check'></i></span>",
+                crossElement:"<span class='text-danger'><i class='fas fa-times'></i></span>"
+            }},
+            {title:"Species", field:"species"},
+            {title:"Journal", field:"journal", hozAlign:"left"},
+            {title:"Year", field:"year", hozAlign:"left"},
+            {title:"DOI", field:"doi", formatter:"html", hozAlign:"left"},
+            {title:"Authors", field:"authors", hozAlign:"left"},
+            {title:"Technology", field:"technology", hozAlign:"left"},
+            {title:"Reagent", field:"reagent", hozAlign:"left"},
+            {title:"Condition", field:"condition", hozAlign:"left"},
+            {title:"Cell line", field:"cellline", hozAlign:"left"},
+            {title:"Strand", field:"strand", hozAlign:"left"},
+            {title:"Princile", field:"princile", hozAlign:"left"},
+            {title:"Data type", field:"datatype", hozAlign:"left"},
+            {title:"File size", field:"filesize", hozAlign:"left"},
+        ],
+    });
+
+/*
+    function set_table(bw_obj_list){
+        $('#tbdy').empty();
+        for(var i=0;i<bw_obj_list.length;i++)
+        {
+            var input = $('<input name="bwfile" type="checkbox" style="width:20px;height:20px;" value='+bw_obj_list[i].file_path+'>');
+            var input_cont = $('<td class="text-center align-middle"></td>');
+            input_cont.append(input);
+            var species = $('<td>'+dbName2humanName[bw_obj_list[i].species]+'</td>');
+            var journal = $('<td>'+bw_obj_list[i].journal+'</td>');
+            var year = $('<td>'+bw_obj_list[i].year+'</td>');
+            var doi = $('<td><a target="_blank" href="http://doi.org/'+bw_obj_list[i].doi+'">'+bw_obj_list[i].doi+'</a></td>');
+            var authors = $('<td>'+bw_obj_list[i].firstauthor+"..."+bw_obj_list[i].correspondauthor+'</td>');
+            var technology = $('<td>'+bw_obj_list[i].technology+'</td>');
+            var reagent = $('<td>'+bw_obj_list[i].reagent+'</td>');
+            var condition = $('<td>'+bw_obj_list[i].condition+'</td>');
+            var cellline = $('<td>'+bw_obj_list[i].cellline+'</td>');
+            var strand = $('<td>'+bw_obj_list[i].strand+'</td>');
+            var principle = $('<td>'+bw_obj_list[i].principle+'</td>');
+            var dataType = $('<td>'+bw_obj_list[i].datatype+'</td>');
+            var filesize = $('<td>'+bw_obj_list[i].file_size+'</td>');
+
+            var tr_obj = $('<tr></tr>');
+            tr_obj.append( input_cont );
+            tr_obj.append( species );
+            tr_obj.append( journal );
+            tr_obj.append( year );
+            tr_obj.append( doi );
+            tr_obj.append( authors );
+            tr_obj.append( technology );
+            tr_obj.append( reagent );
+            tr_obj.append( condition );
+            tr_obj.append( cellline );
+            tr_obj.append( strand );
+            tr_obj.append( principle );
+            tr_obj.append( dataType );
+            tr_obj.append( filesize );
+
+            //console.log(tr_obj);
+            $('#tbdy').append(tr_obj);
+        }
+    }
+*/
+
+    function set_table(bw_obj_list){
+        table.clearData();
+
+        var data_list = [];
+        for(var i=0;i<bw_obj_list.length;i++)
+        {
+            var select = true;
+            data_list.push({
+                id: i+1,
+                select: false, 
+                species: dbName2humanName[bw_obj_list[i].species], 
+                journal: bw_obj_list[i].journal, 
+                year: bw_obj_list[i].year, 
+                doi: '<a target="_blank" class="text-primary" href="http://doi.org/'+bw_obj_list[i].doi+'">'+bw_obj_list[i].doi+'</a>',
+                authors: bw_obj_list[i].firstauthor+"..."+bw_obj_list[i].correspondauthor,
+                technology: bw_obj_list[i].technology,
+                reagent: bw_obj_list[i].reagent,
+                condition: bw_obj_list[i].condition,
+                cellline: bw_obj_list[i].cellline,
+                strand: bw_obj_list[i].strand,
+                princile: bw_obj_list[i].principle,
+                datatype: bw_obj_list[i].datatype,
+                filesize: bw_obj_list[i].file_size,
+                bwFile: bw_obj_list[i].file_path,
+                BedFile: bw_obj_list[i].bed_file_path
+            });
+        }
+        table.addData(data_list, false);
+    }
+
+    
+    function downloadbw(type){
+        var rows = table.getData();
+        /*if(rows.length==0)
+        {
+            alerter("Error", "Please Select files");
+            return;
+        }*/
+        var url = "/api/downloadfile/?";
+        if(type=="bigwig")
+            url += "filetype=bw";
+        else if(type=="bed")
+            url += "filetype=bed";
+        else{
+            alerter("Error", "Download type invalid");
+            return;
+        }
+        var fileNum = 0;
+        for(var i=0;i<rows.length;i++)
+            if(rows[i].select==true)
+            {
+                fileNum += 1;
+                if(type=="bigwig")
+                    url += "&filelist="+rows[i].bwFile;
+                else if(type=="bed")
+                    url += "&filelist="+rows[i].BedFile;
+            }
+        if(fileNum==0)
+        {
+            alerter("Error", "Please Select files");
+            return;
+        }else{
+            var element = document.createElement('a'); 
+            element.setAttribute('href', url);
+            document.body.appendChild(element); 
+            element.click(); 
+            document.body.removeChild(element); 
+        }
+    }
+
+    $('#adv_species').on('change', function(){ reset_options(); update_filter_table(); });
+    $('#adv_technology').on('change', function(){ update_filter_table(); });
+    $('#adv_reagent').on('change', function(){ update_filter_table(); });
+    $('#adv_journal').on('change', function(){ update_filter_table(); });
+    $('#adv_year').on('change', function(){ update_filter_table(); });
+    $('#adv_firstauthor').on('change', function(){ update_filter_table(); });
+    $('#adv_corresauthor').on('change', function(){ update_filter_table(); });
+    $('#adv_title').on('change', function(){ update_filter_table(); });
+    $('#adv_datatype').on('change', function(){ update_filter_table(); });
+    $('#adv_condition').on('change', function(){ update_filter_table(); });
+    $('#adv_source').on('change', function(){ update_filter_table(); });
+    $('#adv_cellline').on('change', function(){ update_filter_table(); });
+    $('#adv_strand').on('change', function(){ update_filter_table(); });
+    $('#adv_principle').on('change', function(){ update_filter_table(); });
+
+</script>
+
+{% endblock main %}

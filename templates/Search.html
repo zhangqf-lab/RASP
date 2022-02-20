@@ -1,0 +1,292 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<title>Search</title>
+{% endblock head %}
+
+{% block main %}
+
+<div id="waiting" style="display:none;">
+    <div class="spinner-border mx-auto d-block" style="width:100px;height:100px;"></div>
+    <div class="text-center mt-2 larger-text">Please waiting...</div>
+</div>
+
+<div class="container-fluid" id="main">
+
+
+    <form class="container-fluid" action="search_gene/" method="get" id="search_gene_form" data-step="1" data-intro="Search gene or transcript. Select a or multiple specoes and then provide gene symbol, gene id or transcript id." data-position='bottom'>
+        <div class="text-center">
+            <h3 class="title">Search Gene</h3>
+        </div>
+        <div class="row mb-2">
+            <div class="col-lg-10 offset-lg-1">
+                <div class="dropdown show">
+                    <input type="text" class="form-control form-control-lg rounded border text-input-pale-blue dropdown-toggle" name="gene_symbol" placeholder="gene symbol/gene ID/transcript ID" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false" onfocus="update_dropdown()" oninput="update_dropdown()" autocomplete="off" id="search_input" required>
+                    <div class="dropdown-menu w-100" aria-labelledby="gene_symbol" id="search_input_dd">
+                        <button type="button" class="dropdown-item" disabled>Please Select Species</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="row">
+            
+            <div class="col-lg-6 offset-lg-1">
+                <div class="dropdown btn-group w-100" id="species_select_dropdown1">
+                    <button type="button" class="form-control form-control btn-lg btn d-inline-block dark-blue dropdown-toggle text-truncate w-100 mb-2 mb-lg-0" data-toggle="dropdown" id="btn1" aria-haspopup="true" aria-expanded="false">Select Species</button>
+                    <div class="dropdown-menu border-0 dropdown-menu-right" id="species_select_menu1" aria-labelledby="btn1">
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                            <div class="mw-50 p-3 shadow rounded-lg">
+                                <button type="button" class="close" onclick="toggle_sp(1)" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                </button>
+                                <div class="rounded w-100 mb-3 p-1 bg-red">
+                                    <h3 class="font-weight-light">Animals</h3>
+                                    <div class="btn-group btn-group-toggle">
+                                        {% for animal in animals %}
+                                        <label class="btn btn-outline-dark-blue loud-link-click" data-sound="button-click">
+                                            <input type="checkbox" name="species1" value="{{animal.stdname}}">{{animal.humanname}}
+                                        </label>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="rounded w-100 mb-3 p-1 bg-red">
+                                    <h3 class="font-weight-light">Plants</h3>
+                                    <div class="btn-group btn-group-toggle">
+                                        {% for plant in plants %}
+                                        <label class="btn btn-outline-dark-blue loud-link-click" data-sound="button-click">
+                                            <input type="checkbox" name="species1" value="{{plant.stdname}}">{{plant.humanname}}
+                                        </label>
+                                        {% endfor %}
+                                    </div> 
+                                </div>
+                                <div class="rounded w-100 p-1 bg-red">
+                                    <h3 class="font-weight-light">Bacteria and fungi</h3>
+                                    <div class="btn-group btn-group-toggle">
+                                        {% for bacteria in bacteria_fungi %}
+                                        <label class="btn btn-outline-dark-blue loud-link-click" data-sound="button-click">
+                                            <input type="checkbox" name="species1" value="{{bacteria.stdname}}">{{bacteria.humanname}}
+                                        </label>
+                                        {% endfor %}
+                                    </div> 
+                                </div>
+                                <div class="rounded w-100 p-1 bg-red">
+                                    <h3 class="font-weight-light">Virus</h3>
+                                    <div class="btn-group btn-group-toggle">
+                                        {% for viru in virus %}
+                                        <label class="btn btn-outline-dark-blue loud-link-click" data-sound="button-click">
+                                            <input type="checkbox" name="species1" value="{{viru.stdname}}">{{viru.humanname}}
+                                        </label>
+                                        {% endfor %}
+                                    </div> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <input type="submit" class="form-control btn btn-lg btn-block btn-dark-blue" value="Search Gene" id="submit_gene">
+            </div>
+        
+        </div>
+    </form>
+    
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-10 offset-lg-1">
+                <div class="line"></div>
+            </div>
+        </div>
+    </div>
+
+    <form class="container-fluid mb-3" action="search_seq/" method="post" id="search_seq_form" data-step="2" data-intro="Blast sequence. You can select multiple species." data-position='bottom'>
+        {% csrf_token %}
+        <div class="text-center">
+            <h3 class="title">Search Sequence</h3>
+        </div>
+        <div class="row no-gutters">
+            <div class="col-lg-10 offset-lg-1">
+                <textarea class="border rounded text-input-pale-blue w-100 text-monospace" name="sequence" style="min-height: 200px; border:6px solid; resize: vertical;" placeholder="Fasta sequence here...(Only single sequence is allowed. less than 200nt)&#10;>rna&#10;ATGCTAGACTAGCATGC&#10;ACTGACTCGATGCTGC"></textarea>
+            </div>
+        </div>
+        <div class="row mb-lg-2">
+            <div class="col-lg-10 offset-lg-1">
+                <div class="dropdown btn-group w-100" id="species_select_dropdown2">
+                    <button type="button" class="form-control form-control btn-lg btn d-inline-block dark-blue dropdown-toggle text-truncate w-100 mb-2 mb-lg-0" data-toggle="dropdown" id="btn2">Select Species</button>
+                    <div class="dropdown-menu border-0 dropdown-menu-right" id="species_select_menu2">
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                            <div class="mw-50 p-3 shadow rounded-lg">
+                                <button type="button" class="close" onclick="toggle_sp(2)" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                </button>
+                                <div class="rounded w-100 mb-3 p-1 bg-red">
+                                    <h3 class="font-weight-light">Animals</h3>
+                                    <div class="btn-group btn-group-toggle">
+                                        {% for animal in animals %}
+                                        <label class="btn btn-outline-dark-blue loud-link-click" data-sound="button-click">
+                                            <input type="checkbox" name="species2" value="{{animal.stdname}}">{{animal.humanname}}
+                                        </label>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="rounded w-100 mb-3 p-1 bg-red">
+                                    <h3 class="font-weight-light">Plants</h3>
+                                    <div class="btn-group btn-group-toggle">
+                                        {% for plant in plants %}
+                                        <label class="btn btn-outline-dark-blue loud-link-click" data-sound="button-click">
+                                            <input type="checkbox" name="species2" value="{{plant.stdname}}">{{plant.humanname}}
+                                        </label>
+                                        {% endfor %}
+                                    </div> 
+                                </div>
+                                <div class="rounded w-100 p-1 bg-red">
+                                    <h3 class="font-weight-light">Bacteria and fungi</h3>
+                                    <div class="btn-group btn-group-toggle">
+                                        {% for bacteria in bacteria_fungi %}
+                                        <label class="btn btn-outline-dark-blue loud-link-click" data-sound="button-click">
+                                            <input type="checkbox" name="species2" value="{{bacteria.stdname}}">{{bacteria.humanname}}
+                                        </label>
+                                        {% endfor %}
+                                    </div> 
+                                </div>
+                                <div class="rounded w-100 p-1 bg-red">
+                                    <h3 class="font-weight-light">Virus</h3>
+                                    <div class="btn-group btn-group-toggle">
+                                        {% for viru in virus %}
+                                        <label class="btn btn-outline-dark-blue loud-link-click" data-sound="button-click">
+                                            <input type="checkbox" name="species2" value="{{viru.stdname}}">{{viru.humanname}}
+                                        </label>
+                                        {% endfor %}
+                                    </div> 
+                                </div>
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 offset-lg-1 input-group mb-2 mb-lg-0">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">E-value</span>
+                </div>
+                <input type="number" class="form-control form-control-lg form-control" placeholder="evalue" name="evalue" value="0.01">
+            </div>
+            <div class="col-lg-4">
+                <input type="submit" class="form-control btn btn-lg btn-block btn-dark-blue" value="Search Sequence" id="submit_seq">
+            </div>
+        </div>
+    </form>
+
+</div>
+
+<script>
+
+    $('#search_sb').addClass('active');
+
+    function toggle_sp(ID){
+
+        var dropdown_obj = $('#species_select_dropdown'+String(ID));
+        var menu_obj = $('#species_select_menu'+String(ID));
+        var close_btn = $('#btn'+String(ID));
+        var checked_inputs = $("input[name='species"+String(ID)+"']:checked");
+
+        if( dropdown_obj.hasClass('show') )
+        {
+            dropdown_obj.removeClass('show');
+            menu_obj.removeClass('show');
+            var selected_species = [];
+            $.each(checked_inputs, function(){
+                selected_species.push(this.nextSibling.textContent);
+            });
+            if( selected_species.length>0 )
+                close_btn.html(selected_species.join(", "));
+            else
+                close_btn.html("Select Species");
+        }else{
+            dropdown_obj.addClass('show');
+            menu_obj.addClass('show');
+        }
+    }
+
+    $('#species_select_dropdown1').on('hide.bs.dropdown', function(){ return false; });
+    $('#species_select_dropdown2').on('hide.bs.dropdown', function(){ return false; });
+
+    function waiting(){
+        $('#main').hide();
+        $('#waiting').show();
+    }
+
+    document.getElementById("submit_gene").addEventListener("click", function(event){
+        var len = $("input[name='species1']:checked").length;
+        var symbol = $("input[name='gene_symbol']").val();
+        if(len==0 || symbol==""){
+            event.preventDefault();
+            //$('#v1').removeClass('d-none');
+            alerter("Error", "You should fill the black and then submit!");
+        }else{
+            $( "#search_gene_form" ).submit();
+            waiting();
+        }
+    });
+
+    document.getElementById("submit_seq").addEventListener("click", function(event){
+        var len = $("input[name='species2']:checked").length;
+        if(len==0)
+        {
+            event.preventDefault();
+            alerter("Error", "Please select species!");
+            return;
+        }
+
+        var sequence = $("textarea[name='sequence']").val();
+        var result = valid_textarea_seq(sequence, must_strict_fasta=false, min_seq_num=1, max_seq_num=1, min_length=15, max_length=200, alphabet=['A','C','T','G','U']);
+
+        if(result['error_type'] != 0)
+        {
+            event.preventDefault();
+            alerter("Error", result['error_msg']);
+            return;
+        }
+
+        $( "#search_seq_form" ).submit();
+        waiting();
+    });
+
+    function update_dropdown(){
+        var search_symbol = $('#search_input').val().trim();
+        var species = $('input[name="species1"]:checked').val();
+        console.log(species);
+        if(species===undefined)
+            return;
+
+        var query_link = "/api/query_symbol_match/?species="+species;
+        if(search_symbol != "")
+            query_link += "&symbol="+search_symbol;
+
+        $.ajax({
+            type: 'get',
+            url: query_link,
+            dataType: 'json',
+            success: function(data, status){
+                $("#search_input_dd").empty();
+                var symbols = data['symbols'];
+                for(var i=0;i<symbols.length;i++)
+                {
+                    var button = $('<button type="button" class="dropdown-item" onclick="set_content(this);"></button>');
+                    button.html(symbols[i]);
+                    $('#search_input_dd').append(button);
+                }
+            }
+        });
+    }
+
+    function set_content(btn){ $('#search_input').val(btn.innerText); }
+    
+</script>
+
+{% endblock main %}

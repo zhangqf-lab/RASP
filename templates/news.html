@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<title>News</title>
+{% endblock head %}
+
+{% block main %}
+
+<div class="container-fluid">
+    {% for new in news %}
+    <div style="margin-bottom:30px;">
+        <div class="px-1">
+            <h2>{{new.title|safe}}</h2>
+            <small class="text-muted">{{new.date}}</small>
+        </div>
+        <div class="px-1" style="color:black" class="font-weight-normal">
+            <div>{{new.content|safe}}</div>
+        </div>
+    </div>
+    {% endfor %}
+
+
+    <div class="card">
+      <div class="card-header h4">
+        Citation
+      </div>
+      <div class="card-body">
+        <p class="card-text"><a href="https://doi.org/10.1093/nar/gkaa880" class="text-primary"><i>RASP</i>: an atlas of transcriptome-wide RNA secondary structure probing data</a>, Pan Li*, Xiaolin Zhou*, Kui Xu and Qiangfeng Cliff Zhang#, <i>Nucleic Acids Research</i> (In press)</p>
+      </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $('#news_sb').addClass('active');
+</script>
+
+{% endblock main %}

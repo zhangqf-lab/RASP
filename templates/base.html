@@ -1,0 +1,277 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="RASP, RNA secondary structure, Database of RNA Structure Probing">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'favicon.ico' %}" />
+
+    <!--<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i%7CQuicksand:300,400,500,700" rel="stylesheet">-->
+    <!-- Bootstrap CSS CDN -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <!-- Our Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <!-- Scrollbar Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/jquery.mCustomScrollbar.min.css' %}">
+
+    <!-- Font Awesome JS -->
+    <link rel="stylesheet" href="{% static 'css/fontawesome.css' %}">
+    <link rel="stylesheet" href="{% static 'css/introjs.css' %}">
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.js' %}"></script>
+    <script src="{% static 'js/RASP.js' %}"></script>
+
+    <style>
+        * { font-family: Roboto; }
+        .text-monospace * { font-family:RobotoMono; }
+
+        @font-face {
+          font-family: Kalam;
+          src: url(/static/fonts/Kalam-Bold.ttf);
+          font-weight: bold;
+        }
+        @font-face {
+          font-family: Kalam;
+          src: url(/static/fonts/Kalam-Regular.ttf);
+          font-weight: normal;
+        }
+        @font-face {
+          font-family: Kalam;
+          src: url(/static/fonts/Kalam-Light.ttf);
+          font-weight: 100;
+        }
+
+    </style>
+
+    {%block head%}
+    {%endblock%}
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <!--     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-175346589-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-175346589-1');
+    </script> -->
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?fe14a2e562b97f4200b5b6b735bc383b";
+            var s = document.getElementsByTagName("script")[0]; 
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+</head>
+
+<body>
+
+    <!-- 错误提示器 -->
+    <div style="position: fixed; top: 25px; right: 25px; z-index: -1;">
+      <!-- Then put toasts within -->
+      <div class="toast" role="alert" aria-live="polite" aria-atomic="true" data-delay="10000" style="width: 500px;" id="alerter">
+        <div class="toast-header">
+            <svg class="bd-placeholder-img rounded mr-2" width="20" height="20" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img"><rect width="100%" height="100%" fill="#f44336"></rect></svg>
+            <strong class="mr-auto" style="color:#f44336">Error</strong>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="toast-body">
+            This is the error message! You should bla bla bla...
+        </div>
+      </div>
+    </div>
+
+
+    <!---->
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+            <div class="sidebar-header clearfix">
+                <a href="/news/" data-toggle="tooltip" data-placement="bottom" title="RNA Atalas of Structure Probing" sidebar-tooltip="tooltip">
+                    <h3 class="text-center" style="letter-spacing: 9px;">
+                        <i class="fas fa-home"></i><!--
+                        --><span style="color:#fed17e">RA</span><!--
+                        --><span style="color:#0095ad;">SP</span>
+                    </h3>
+                </a>
+                <!--<small class="float-right">Beta</small>-->
+            </div>
+            <ul class="list-unstyled components">
+                <li id="news_sb">
+                    <a href="/news/"><i class="far fa-newspaper"></i>&nbsp;News</a>
+                </li>
+                <li id="search_sb" data-toggle="tooltip" data-placement="top" title="Search gene or sequence" sidebar-tooltip="tooltip">
+                    <a href="/search/"><i class="fas fa-search"></i>&nbsp;Search</a>
+                </li>
+                <li id="browse_sb" data-toggle="tooltip" data-placement="top" title="Browse in genome browser" sidebar-tooltip="tooltip">
+                    <a href="/browser/?species=hg38"><i class="far fa-window-maximize"></i>&nbsp;Browse</a>
+                </li>
+                <li id="alignment_sb" data-toggle="tooltip" data-placement="top" title="Align sequence and structure score" sidebar-tooltip="tooltip">
+                    <a href="/alignment/"><i class="fas fa-align-justify"></i>&nbsp;Alignment <span class="badge badge-pill badge-info text-right" style="display:none" id="align_indicator">1</span></a>
+                </li>
+                <li id="predict_sb" data-toggle="tooltip" data-placement="top" title="Predict RNA secondary structure" sidebar-tooltip="tooltip">
+                    <a href="/predstr/"><i class="fas fa-bolt"></i>&nbsp;&nbsp;&nbsp;Predict</a>
+                </li>
+                <li id="statistics_sb" data-toggle="tooltip" data-placement="top" title="Data statistics" sidebar-tooltip="tooltip">
+                    <a href="/statistics/"><i class="fas fa-chart-pie"></i>&nbsp;Statistics</a>
+                </li>
+                <li id="download_sb" data-toggle="tooltip" data-placement="top" title="Download annotation file, genome sequence and score" sidebar-tooltip="tooltip">
+                    <a href="/download/"><i class="fas fa-download"></i>&nbsp;Download</a>
+                </li>
+                <li id="help_sb">
+                    <a href="/help/"><i class="fas fa-question-circle"></i>&nbsp;Help</a>
+                </li>
+                <li id="upload_sb"  data-toggle="tooltip" data-placement="top" title="Fill out the form to remind us to collect your published data" sidebar-tooltip="tooltip">
+                    <a href="/upload/"><i class="fas fa-cloud-upload-alt"></i>&nbsp;Upload</a>
+                </li>
+                <li id="contact_sb">
+                    <a href="/contact/"><i class="fas fa-phone"></i>&nbsp;Contact</a>
+                </li>
+            </ul>
+            
+            <!--
+            <div class="text-center mb-3">
+                <a class="btn btn-lg btn-success" style="width:200px;" href="/feedback/"><i class="fas fa-comments"></i> Discussion</a>
+            </div>
+            -->
+
+            <div class="text-center mb-3">
+                <a class="text-warning" href="/SARS2/">
+                    <div style="display: inline-block; width: 60px;">
+                        <img src="/static/img/coronavirus-icon.png" class="mCS_img_loaded" width="100%">
+                    </div>
+                    <div>
+                        <span style="display: block; font-size: 20px; font-family: Kalam; font-weight: bold">Special: <br>SARS-CoV-2</span>
+                    </div>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Page Content  -->
+        <div id="content">
+
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid" id="content_button">
+                    <button type="button" id="sidebarCollapse_cont" class="btn btn-toggle siderbarButtons">
+                        <i class="fas fa-align-left"></i>
+                        <span style="font-size:1.4em;">Menu</span>
+                    </button>
+                </div>
+                <!--
+                <h5 class="font-weight-light text-nowrap description d-none d-lg-inline-block">Database for <b>RNA</b> Structure <b>Prob</b>ing data</h5>
+                -->
+                <div class="mr-3 d-none d-lg-block">
+                <button class="btn btn-info" style="" href="#" onclick="javascript:introJs().start();">
+                    <i class="fas fa-question-circle"></i>
+                </button>
+                </div>
+            </nav>
+            {%block help%}
+            {%endblock%}
+
+            {%block main%}
+            {%endblock%}
+
+            <!-- Modal -->
+            <div class="modal fade" id="CookiePage" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="overflow-x: scroll;">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <form class="modal-content" style="min-width: 800px" id="CookiePage_form">
+                  {% csrf_token %}
+                  <div class="modal-header">
+                    <h5 class="modal-title"><strong>Welcome to RASP Database</strong></h5>
+                    <button type="submit" class="close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <p class="paragraph"><b>RASP</b> (<b>R</b>NA <b>A</b>latas of <b>S</b>tructure <b>P</b>robing) is a RNA structure probing database. </p>
+                            <p class="paragraph">You can click the help button <img src="/static/img/helpbutton1.png" style="width:30px" alt="help1" /> in the upper right corner or the document button <img src="/static/img/helpbutton2.png" style="width:30px" alt="help1" /> on the right to get help.</p>
+                            <p class="paragraph">This site uses cookies to give you a better experience. Click Agree button to confirm it.</p>
+                            <p class="text-warning" style="font-family: Roboto; font-weight: bold;">RASP does not support IE browser！</p>
+                        </div>
+                    </div>
+                    <!--
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <input type="text" name="nickName" id="nickName_inp" class="form-control form-control-lg" placeholder="nickname，like: Pan" required>
+                        </div>
+                    </div>-->
+                  </div>
+                  <div class="modal-footer">
+                    <!--<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
+                    <button type="submit" class="btn btn-primary">Agree</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- jQuery Custom Scroller CDN -->
+    <script>
+        if(!!document.documentMode){
+            window.alert("Warning: Detect you are using IE explorer, please don't use it, we recommend you to use Chrome or Firefox");
+        }
+    </script>
+
+    <script src="{% static 'js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
+    <script src="{% static 'js/intro.js' %}"></script>
+    <script src="{% static 'js/loudlinks.min.js' %}"></script>
+
+    <script>
+
+        $('.customizer-toggle').on('click',function(){
+            $('.customizer').toggleClass('open');
+        });
+        $('.customizer-close').on('click',function(){
+            $('.customizer').removeClass('open');
+        });
+        
+        $('[sidebar-tooltip="tooltip"]').tooltip();
+
+        $(document).ready(function () {
+            $("#sidebar").mCustomScrollbar({
+                theme: "minimal"
+            });
+
+            /* Menu按钮点击 */
+            $('.siderbarButtons').on('click', function () {
+                $('#sidebar, #content').toggleClass('active');
+                $('.collapse.in').toggleClass('in');
+                $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+            });
+
+            /* 设置Alignment右边的数字 */
+            set_user_alignment_cache_num();
+        });
+
+        /* Cookie Page Form提交事件 */
+        $('#CookiePage_form').submit(function(e){
+            e.preventDefault();
+            $.ajax({
+                url:'/api/create_cookie_obj/',
+                type:'post',
+                data:$('#CookiePage_form').serialize(),
+                success:function(data, status){
+                    set_user_alignment_cache_num();
+                }
+            });
+            $('#CookiePage').modal('hide');
+        });
+    </script>
+</body>
+
+</html>

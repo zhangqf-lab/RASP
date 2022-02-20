@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<title>Special: SARS-CoV-2</title>
+{% endblock head %}
+
+{% block main %}
+
+    <h1 class="text-center text-secondary" style="margin-bottom: 40px;margin-top: 20px;"><span class="text-primary">Special:</span> SARS-CoV-2 probing data</h1>
+    
+    <h3 class="text-center my-3">Datasets</h3>
+    <div style="overflow-x: scroll;">
+        <table class="table table-stripped table-hover" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Manuscript</th>
+                    <th>Virus</th>
+                    <th>Technology</th>
+                    <th>Condition</th>
+                    <th>Treatment reagent</th>
+                    <th>Control sample</th>
+                    <th>Cell line</th>
+                    <th>Data accessibility</th>
+                    <th>Load data</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><a class="text-primary" href="https://www.doi.org/10.1101/2020.07.07.192732">(Lei Sun, et al.)</a></td>
+                    <td><a class="text-primary" href="https://www.ncbi.nlm.nih.gov/nucleotide/NC_045512.2">Wuhan-Hu-1</a></td>
+                    <td>icSHAPE</td>
+                    <td><i>in vivo</i> / <i>in vitro refolded</i></td>
+                    <td>NAI-N<sub>3</sub></td>
+                    <td>DMSO</td>
+                    <td>Huh7</td>
+                    <td><a class="text-primary" href="http://rasp.zhanglab.net/SARS2/">RASP</a></td>
+                    <td><input name="selector" type="checkbox" style="width:20px;height:20px;" priority="7" value='icSHAPE_invivo%2CicSHAPE_vitro'></td>
+                </tr>
+                <tr>
+                    <td><a class="text-primary" href="https://www.doi.org/10.1101/2020.06.15.151647">(Ilaria Manfredonia, et al.)</a></td>
+                    <td><a class="text-primary" href="https://www.ncbi.nlm.nih.gov/nucleotide/MT510999.1">Leiden-0002</a></td>
+                    <td>SHAPE-MaP</td>
+                    <td><i>in vitro refolded</i></td>
+                    <td>NAI</td>
+                    <td>DMSO</td>
+                    <td>VeroE6</td>
+                    <td><a class="text-primary" href="http://www.incarnatolab.com/datasets/SARS_Manfredonia_2020.php">INCARNATO lab</a></td>
+                    <td><input name="selector" type="checkbox" style="width:20px;height:20px;" priority="8" value='Leiden-0002_VCF%2CSHAPE-MaP_invitro' checked></td>
+                </tr>
+                <tr>
+                    <td><a class="text-primary" href="https://www.doi.org/10.1101/2020.07.10.197079">(Nicholas C. Huston, et al.)</a></td>
+                    <td><a class="text-primary" href="https://www.ncbi.nlm.nih.gov/nucleotide/MN908947">Wuhan-Hu-1</a></td>
+                    <td>SHAPE-MaP</td>
+                    <td><i>in vivo</i></td>
+                    <td>NAI</td>
+                    <td>DMSO</td>
+                    <td>VeroE6</td>
+                    <td><a class="text-primary" href="https://github.com/pylelab/SARS-CoV-2_SHAPE_MaP_structure">Github</a></td>
+                    <td><input name="selector" type="checkbox" style="width:20px;height:20px;" priority="9" value='SHAPE-MaP_invivo' checked></td>
+                </tr>
+                <tr>
+                    <td><a class="text-primary" href="https://www.doi.org/10.1101/2020.06.15.153197">(Wes Sanders, et al.)</a></td>
+                    <td>
+                        <a class="text-primary" href="https://www.ncbi.nlm.nih.gov/nucleotide/MN985325.1">USA-W1</a>
+                    </td>
+                    <td>SHAPE-MaP</td>
+                    <td><i>in virion</i></td>
+                    <td>1M7</td>
+                    <td>DMSO+Denatured</td>
+                    <td>VeroE6</td>
+                    <td>Not published</td>
+                    <td><input name="selector" type="checkbox" style="width:20px;height:20px;" priority="10" value='SHAPEMaP_1M7_data' disabled></td>
+                </tr>
+                <tr>
+                    <td><a class="text-primary" href="https://www.doi.org/10.1101/2020.06.29.178343">(Tammy C. T. Lan, et al.)</a></td>
+                    <td><a class="text-primary" href="https://www.ncbi.nlm.nih.gov/nucleotide/MN985325.1">USA-WA1/2020</a></td>
+                    <td>DMS-MaPseq</td>
+                    <td><i>in vivo</i> / <i>in vitro</i></td>
+                    <td>DMS</td>
+                    <td>Untreated</td>
+                    <td>Vero cells</td>
+                    <td><a class="text-primary" href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE153851">GEO</a></td>
+                    <td><input name="selector" type="checkbox" style="width:20px;height:20px;" priority="11" value='USA-WA1_VCF%2CDMS_MaPseq_mutRatio_rep1%2CDMS_MaPseq_mutRatio_rep2%2CDMS_MaPseq_mutRatio_noDMS'></td>
+                </tr>
+                <tr>
+                    <td><a class="text-primary" href="https://www.doi.org/10.1101/2020.06.11.147199">(Christiane Iserman, et al.)</a></td>
+                    <td><a class="text-primary" href="https://www.ncbi.nlm.nih.gov/nucleotide/NC_045512.2">Wuhan-Hu-1</a></td>
+                    <td>SHAPE-MaP</td>
+                    <td><i>in vitro transcribed fragments</i></td>
+                    <td>5NIA</td>
+                    <td>DMSO</td>
+                    <td>N/A</td>
+                    <td>Not published</td>
+                    <td><input name="selector" type="checkbox" style="width:20px;height:20px;" priority="12" value='SHAPE_MaP_no' disabled></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3 class="text-center my-3">Related tracks</h3>
+    <div class="row mx-3 py-3 mb-2" style="border-top:1px solid #c4c3c0;border-bottom:1px solid #c4c3c0;">
+        <div class="col-md-3 col-lg-2">
+            Sequence <input name="selector" type="checkbox" style="width:15px;height:15px;" value='SARS2_sequence' priority="1" checked>
+        </div>
+        <div class="col-md-3 col-lg-2">
+            Gene annotation <input name="selector" type="checkbox" style="width:15px;height:15px;" value='Gene_annotation' priority="2" checked>
+        </div>
+        <div class="col-md-3 col-lg-2">
+            RNA-Seq <input name="selector" type="checkbox" style="width:15px;height:15px;" value='RNA-Seq_coverage' priority="6">
+        </div>
+        <div class="col-md-3 col-lg-2">
+            RNA-Seq splices <input name="selector" type="checkbox" style="width:15px;height:15px;" value='RNA-Seq_splices' priority="5">
+        </div>
+        <div class="col-md-3 col-lg-2">
+            Human Cov <input name="selector" type="checkbox" style="width:15px;height:15px;" value='Human_Cov' priority="3">
+        </div>
+        <div class="col-md-3 col-lg-2">
+            Bat Cov <input name="selector" type="checkbox" style="width:15px;height:15px;" value='Bat_Cov' priority="4">
+        </div>
+    </div>
+
+    <h3 class="text-center my-3">Genome browser</h3>
+
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">Caution</h4>
+        <p class="mb-0">All the structure scores are aligned to <a class="text-primary" href="https://www.ncbi.nlm.nih.gov/nucleotide/NC_045512.2">Wuhan-Hu-1</a>. Please click the link in the column "Data accessibility" to download the original structure score (aligned to <a class="text-primary" href="https://www.ncbi.nlm.nih.gov/nucleotide/MT510999.1">Leiden-0002</a> or <a class="text-primary" href="https://www.ncbi.nlm.nih.gov/nucleotide/MN985325.1">USA-WA1/2020</a>)</p>
+    </div>
+
+    <div id="iframe_container" class="mb-3">
+        <iframe
+        src="http://jbrowser.zhanglab.net/index2.html?overview=0&loc=NC_045512.2%3A1..300&data=RASP%2FSARS2&nav=1&tracks=SARS2_sequence%2CGene_annotation%2CLeiden-0002_VCF%2CSHAPE-MaP_invitro%2CSHAPE-MaP_invivo"
+        style="border: 1px solid black; width:100%; height:100vh;" id="jbrowser" data-step="4" data-intro="Genome browser. Users can visulize, compare and download data with it. By clicking [About this track], users can view more information about the track literature." data-position='top'>
+        </iframe>
+    </div>
+
+</div>
+<script type="text/javascript">
+    $('input[name="selector"]').change(function() {
+        var select_list = $('input[name="selector"]');
+        var link = "http://jbrowser.zhanglab.net/index2.html?overview=0&data=RASP%2FSARS2&nav=1&tracks=";
+        show_labels = ['', '', '', '', '', '', '', '', ''];
+        for(var i=0; i<select_list.length;++i)
+            if(select_list[i].checked)
+                show_labels[parseInt($(select_list[i]).attr('priority'))] = select_list[i].value;
+        for(var i=0; i<show_labels.length; ++i)
+            if(show_labels[i] != "")
+                link += show_labels[i] + '%2C';
+        link = link.substring(0, link.length-3);
+        console.log(link);
+        $('#jbrowser').attr('src', link);
+    })
+</script>
+
+{% endblock main %}
+
+
+
